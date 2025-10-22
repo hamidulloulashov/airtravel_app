@@ -1,7 +1,9 @@
 import 'package:airtravel_app/core/utils/app_colors.dart';
+import 'package:airtravel_app/core/utils/app_icons.dart';
 import 'package:airtravel_app/features/common/widgets/text_button_popular.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/formatter.dart';
@@ -21,7 +23,17 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(),
+      appBar: AppBar(
+        leadingWidth: 75,
+        leading: Center(
+          child: IconButton(
+            onPressed: () {
+              // context.pop();
+            },
+            icon: SvgPicture.asset(AppIcons.arrowLeft),
+          ),
+        ),
+      ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 62.h),
         child: Column(
@@ -51,9 +63,8 @@ class _SignUpPageState extends State<SignUpPage> {
                       contentPadding: EdgeInsets.all(20),
                       prefixIcon: const Icon(Icons.phone),
                       hintText: "Telefon raqamingizni kiriting",
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16.r),
-                          borderSide: BorderSide.none),
+                      border:
+                          OutlineInputBorder(borderRadius: BorderRadius.circular(16.r), borderSide: BorderSide.none),
                       filled: true,
                       fillColor: AppColors.grenWhite),
                 ),

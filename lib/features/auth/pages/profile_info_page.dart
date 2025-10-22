@@ -2,9 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../core/utils/app_colors.dart';
+import '../../../core/utils/app_icons.dart';
 import '../../common/widgets/text_button_popular.dart';
 import '../../common/widgets/text_field_popular.dart';
 
@@ -47,6 +50,15 @@ class _ProfileInfoPageState extends State<ProfileInfoPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
+        leadingWidth: 75,
+        leading: Center(
+          child: IconButton(
+            onPressed: () {
+              context.pop();
+            },
+            icon: SvgPicture.asset(AppIcons.arrowLeft),
+          ),
+        ),
         title: Text(
           "Ma'lumotlarni kiriting",
           style: TextStyle(

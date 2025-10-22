@@ -1,5 +1,6 @@
 class AppIcons {
   static const backArrow = "assets/icons/back-arrow.svg";
+  static const arrowLeft = "assets/icons/arrow-Left.svg";
   static const bathroom = "assets/icons/bathroom.svg";
   static const bed = "assets/icons/bed.svg";
   static const bedroom = "assets/icons/bedroom.svg";

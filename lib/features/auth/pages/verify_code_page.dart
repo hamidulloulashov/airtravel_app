@@ -2,9 +2,11 @@ import 'package:airtravel_app/core/router/routes.dart';
 import 'package:airtravel_app/core/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pinput/pinput.dart';
 
+import '../../../core/utils/app_icons.dart';
 import '../../common/widgets/text_button_popular.dart';
 
 class VerifyCodePage extends StatelessWidget {
@@ -18,6 +20,15 @@ class VerifyCodePage extends StatelessWidget {
         title: Text(
           "Kodni kiriting",
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+        ),
+        leadingWidth: 75,
+        leading: Center(
+          child: IconButton(
+            onPressed: () {
+              context.pop();
+            },
+            icon: SvgPicture.asset(AppIcons.arrowLeft),
+          ),
         ),
       ),
       body: Padding(
