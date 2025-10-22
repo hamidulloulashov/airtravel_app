@@ -9,12 +9,11 @@ import '../../common/widgets/text_button_popular.dart';
 
 class VerifyCodePage extends StatelessWidget {
   const VerifyCodePage({super.key});
-
   @override
   Widget build(BuildContext context) {
     final controller = TextEditingController();
-
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
           "Kodni kiriting",

@@ -3,7 +3,7 @@ import 'package:airtravel_app/core/result.dart';
 import 'package:dio/dio.dart';
 class ApiClient {
   final Dio _dio;
-ApiClient()
+  ApiClient()
     : _dio = Dio(
         BaseOptions(
           baseUrl: "http://192.168.100.177:8888/api/v1",

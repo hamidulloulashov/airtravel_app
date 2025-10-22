@@ -6,7 +6,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../core/utils/app_colors.dart';
 import '../../common/widgets/text_button_popular.dart';
-import '../widgets/text_field_popular.dart';
+import '../../common/widgets/text_field_popular.dart';
 
 class ProfileInfoPage extends StatefulWidget {
   const ProfileInfoPage({super.key});
@@ -45,6 +45,7 @@ class _ProfileInfoPageState extends State<ProfileInfoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
           "Ma'lumotlarni kiriting",

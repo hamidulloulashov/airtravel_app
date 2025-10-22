@@ -1,6 +1,6 @@
 import 'package:airtravel_app/core/router/routes.dart';
-import 'package:airtravel_app/features/auth/pages/onboarding_page.dart';
-import 'package:airtravel_app/features/auth/pages/splash_page.dart';
+import 'package:airtravel_app/features/onboarding/pages/onboarding_page.dart';
+import 'package:airtravel_app/features/onboarding/pages/splash_page.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/pages/profile_info_page.dart';
