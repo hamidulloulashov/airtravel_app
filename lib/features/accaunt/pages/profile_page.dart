@@ -10,6 +10,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+
   List icons = [
     AppIcons.profile,
     AppIcons.notifications,

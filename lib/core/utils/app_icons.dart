@@ -48,7 +48,7 @@ class AppIcons {
   static const moreCircle = "assets/icons/MoreCircle.svg";
   static const lock = "assets/icons/Lock.svg";
   static const logout = "assets/icons/Logout.svg";
-  static const infoSquare = "assets/icons/infoSquare.svg";
+  static const infoSquare = "assets/icons/InfoSquare.svg";
   static const send = "assets/icons/Send.svg";
 
 }
