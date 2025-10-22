@@ -1,5 +1,6 @@
 import 'package:airtravel_app/core/utils/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:go_router/go_router.dart';
@@ -15,7 +16,6 @@ class _SplashPage extends State<SplashPage>
   late AnimationController _controller;
   late Animation<double> _animation;
   late AnimationController _spinController;
-
   @override
   void initState() {
     super.initState();
@@ -34,7 +34,7 @@ class _SplashPage extends State<SplashPage>
       vsync: this,
     )..repeat();
 
-    Timer(const Duration(seconds: 3), () {
+    Timer(const Duration(seconds: 4), () {
       context.go('/onboarding'); 
     });
   }
@@ -63,8 +63,8 @@ class _SplashPage extends State<SplashPage>
                     Stack(
                       children: [
                         Container(
-                          width: 60,
-                          height: 60,
+                          width: 60.w,
+                          height: 60.h,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(30),
                             color: const Color.fromARGB(255, 27, 162, 32),
@@ -74,8 +74,8 @@ class _SplashPage extends State<SplashPage>
                           padding: const EdgeInsets.only(left: 15, top: 15),
                           child: Image.asset(
                             "assets/logo.png",
-                            width: 32,
-                            height: 32,
+                            width: 32.w,
+                            height: 32.h,
                           ),
                         )
                       ],
@@ -102,8 +102,8 @@ class _SplashPage extends State<SplashPage>
                   );
                 },
                 child: SizedBox(
-                  width: 40,
-                  height: 40,
+                  width: 40.w,
+                  height: 40.h,
                   child: Stack(
                     children: List.generate(8, (index) {
                       final angle = (index * math.pi * 2) / 8;
@@ -114,8 +114,8 @@ class _SplashPage extends State<SplashPage>
                           20 + math.sin(angle) * 15 - 4,
                         ),
                         child: Container(
-                          width: 8,
-                          height: 8,
+                          width: 8.w,
+                          height: 8.h,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: const Color.fromARGB(255, 27, 162, 32)
