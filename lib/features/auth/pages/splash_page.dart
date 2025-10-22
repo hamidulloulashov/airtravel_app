@@ -30,7 +30,7 @@ class _SplashPage extends State<SplashPage>
     _controller.forward();
 
     _spinController = AnimationController(
-      duration: const Duration(seconds: 1),
+      duration: const Duration(seconds: 4),
       vsync: this,
     )..repeat();
 
