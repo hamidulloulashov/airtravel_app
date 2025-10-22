@@ -50,5 +50,6 @@ class AppIcons {
   static const logout = "assets/icons/Logout.svg";
   static const infoSquare = "assets/icons/InfoSquare.svg";
   static const send = "assets/icons/Send.svg";
+  static const arrowRightGreen = "assets/icons/ArrowRightGreen.svg";
 
 }
