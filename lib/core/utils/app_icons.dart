@@ -46,10 +46,13 @@ class AppIcons {
   static const ziyoratgoh = "assets/icons/ziyoratgoh.svg";
   static const shieldDone = "assets/icons/ShieldDone.svg";
   static const moreCircle = "assets/icons/MoreCircle.svg";
+  static const more = "assets/icons/More.svg";
   static const lock = "assets/icons/Lock.svg";
   static const logout = "assets/icons/Logout.svg";
   static const infoSquare = "assets/icons/InfoSquare.svg";
   static const send = "assets/icons/Send.svg";
+  static const call = "assets/icons/Call.svg";
+  static const ticket = "assets/icons/Ticket.svg";
   static const arrowRightGreen = "assets/icons/ArrowRightGreen.svg";
 
 }

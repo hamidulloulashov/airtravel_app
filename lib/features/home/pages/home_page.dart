@@ -1,4 +1,5 @@
 import 'package:airtravel_app/core/utils/app_colors.dart';
+import 'package:airtravel_app/features/common/widgets/bottom_navigation_bar_app.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
@@ -13,7 +14,8 @@ class HomePage extends StatelessWidget {
         children: [
           Center(child: Text("Meni yoz!!!", style: TextStyle(color: Colors.white, fontSize: 40),))
         ],
-      )
+      ),
+      bottomNavigationBar: BottomNavigationBarApp(),
     );
   }
 }
