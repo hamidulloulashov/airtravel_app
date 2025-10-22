@@ -44,4 +44,11 @@ class AppIcons {
   static const washingMachine = "assets/icons/washing-machine.svg";
   static const wifi = "assets/icons/wifi.svg";
   static const ziyoratgoh = "assets/icons/ziyoratgoh.svg";
+  static const shieldDone = "assets/icons/ShieldDone.svg";
+  static const moreCircle = "assets/icons/MoreCircle.svg";
+  static const lock = "assets/icons/Lock.svg";
+  static const logout = "assets/icons/Logout.svg";
+  static const infoSquare = "assets/icons/infoSquare.svg";
+  static const send = "assets/icons/Send.svg";
+
 }

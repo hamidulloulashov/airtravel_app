@@ -68,8 +68,11 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
+<<<<<<< HEAD
     - assets/icons/
 
+=======
+>>>>>>> c89e641 (yangi svglar qoshdm)
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

@@ -4,4 +4,5 @@ class Routes {
   static const signUp = "/sign-up";
   static const verifyCode = "/verify-code";
   static const profileInfo = "/profile-info";
+  static const profilePage = "/profilePage";
 }

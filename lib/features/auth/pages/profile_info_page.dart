@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:airtravel_app/core/router/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -125,6 +126,9 @@ class _ProfileInfoPageState extends State<ProfileInfoPage> {
             ),
             Spacer(),
             TextButtonPopular(
+              onPressed: () {
+                context.go(Routes.profilePage);
+              },
               title: 'Saqlash',
             ),
           ],
