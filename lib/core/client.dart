@@ -3,7 +3,6 @@ import 'package:airtravel_app/core/result.dart';
 import 'package:dio/dio.dart';
 class ApiClient {
   final Dio _dio;
-
 ApiClient()
     : _dio = Dio(
         BaseOptions(
