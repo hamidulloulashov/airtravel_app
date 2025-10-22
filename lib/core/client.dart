@@ -1,10 +1,11 @@
 import 'package:airtravel_app/core/interceptor.dart';
 import 'package:airtravel_app/core/result.dart';
 import 'package:dio/dio.dart';
+
 class ApiClient {
   final Dio _dio;
 
-ApiClient()
+  ApiClient()
     : _dio = Dio(
         BaseOptions(
           baseUrl: "http://192.168.100.177:8888/api/v1",
@@ -19,18 +20,18 @@ ApiClient()
           },
         ),
       ) {
-  _dio.interceptors.add(AppInterceptor());
-  _dio.interceptors.add(
-    LogInterceptor(
-      request: true,
-      requestBody: true,
-      requestHeader: true,
-      responseHeader: false,
-      responseBody: true,
-      error: true,
-    ),
-  );
-}
+    _dio.interceptors.add(AppInterceptor());
+    _dio.interceptors.add(
+      LogInterceptor(
+        request: true,
+        requestBody: true,
+        requestHeader: true,
+        responseHeader: false,
+        responseBody: true,
+        error: true,
+      ),
+    );
+  }
 
   Future<Result<T>> get<T>(
     String path, {
@@ -56,8 +57,11 @@ ApiClient()
     Map<String, dynamic>? queryParams,
   }) async {
     try {
-      final response =
-          await _dio.post(path, data: data, queryParameters: queryParams);
+      final response = await _dio.post(
+        path,
+        data: data,
+        queryParameters: queryParams,
+      );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         return Result.ok(response.data as T);
       } else {
@@ -76,8 +80,11 @@ ApiClient()
     Map<String, dynamic>? queryParams,
   }) async {
     try {
-      final response =
-          await _dio.delete(path, data: data, queryParameters: queryParams);
+      final response = await _dio.delete(
+        path,
+        data: data,
+        queryParameters: queryParams,
+      );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         return Result.ok(response.data as T);
       } else {
@@ -96,8 +103,11 @@ ApiClient()
     Map<String, dynamic>? queryParams,
   }) async {
     try {
-      final response =
-          await _dio.put(path, data: data, queryParameters: queryParams);
+      final response = await _dio.put(
+        path,
+        data: data,
+        queryParameters: queryParams,
+      );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         return Result.ok(response.data as T);
       } else {
@@ -116,8 +126,11 @@ ApiClient()
     Map<String, dynamic>? queryParams,
   }) async {
     try {
-      final response =
-          await _dio.patch(path, data: data, queryParameters: queryParams);
+      final response = await _dio.patch(
+        path,
+        data: data,
+        queryParameters: queryParams,
+      );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         return Result.ok(response.data as T);
       } else {
