@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:airtravel_app/core/router/routes.dart';
 import 'package:airtravel_app/core/utils/app_colors.dart';
 import 'package:airtravel_app/core/utils/app_icons.dart';
 import 'package:airtravel_app/features/accaunt/widgets/profile_item_widget.dart';
@@ -7,6 +8,7 @@ import 'package:airtravel_app/features/common/widgets/bottom_navigation_bar_app.
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -36,10 +38,7 @@ class _ProfilePageState extends State<ProfilePage> {
         child: SingleChildScrollView(
           physics: AlwaysScrollableScrollPhysics(),
           child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 24.w,
-              vertical: 10.h
-            ),
+            padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 10.h),
             child: Column(
               spacing: 20.h,
               children: [
@@ -89,13 +88,17 @@ class _ProfilePageState extends State<ProfilePage> {
                   spacing: 10.h,
                   children: [
                     ProfileItemWidget(
-                      onTap: () {},
+                      onTap: () {
+                        context.push(Routes.profileEdit);
+                      },
                       text: 'Profilni taxrirlash',
                       icon: AppIcons.profile,
                       iconBack: AppIcons.arrowRightGreen,
                     ),
                     ProfileItemWidget(
-                      onTap: () {},
+                      onTap: () {
+                        context.push(Routes.notificationSettings);
+                      },
                       text: 'Bildirishnoma',
                       icon: AppIcons.notifications,
                       iconBack: AppIcons.arrowRightGreen,
@@ -119,13 +122,17 @@ class _ProfilePageState extends State<ProfilePage> {
                       iconBack: AppIcons.arrowRightGreen,
                     ),
                     ProfileItemWidget(
-                      onTap: () {},
+                      onTap: () {
+                        context.push(Routes.privacyPolicy);
+                      },
                       text: 'Maxfiylik Siyosati',
                       icon: AppIcons.lock,
                       iconBack: AppIcons.arrowRightGreen,
                     ),
                     ProfileItemWidget(
-                      onTap: () {},
+                      onTap: () {
+                        context.push(Routes.helpCenter);
+                      },
                       text: 'Call Markaz',
                       icon: AppIcons.infoSquare,
                       iconBack: AppIcons.arrowRightGreen,

@@ -5,5 +5,9 @@ class Routes {
   static const signUp = "/sign-up";
   static const verifyCode = "/verify-code";
   static const profileInfo = "/profile-info";
-  static const profilePage = "/profilePage";
+  static const profile = "/profile";
+  static const profileEdit = "/profileEdit";
+  static const privacyPolicy = "/privacyPolicy";
+  static const notificationSettings = '/notificationSettings';
+  static const helpCenter = '/helpCenter';
 }

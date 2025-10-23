@@ -1,26 +1,27 @@
 import 'dart:io';
-import 'package:airtravel_app/core/router/routes.dart';
+
+import 'package:airtravel_app/features/common/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+
+import '../../../core/router/routes.dart';
 import '../../../core/utils/app_colors.dart';
-import '../../../core/utils/app_icons.dart';
 import '../../common/widgets/text_button_popular.dart';
 import '../../common/widgets/text_field_popular.dart';
 
-class ProfileInfoPage extends StatefulWidget {
-  const ProfileInfoPage({super.key});
+class ProfileEditPage extends StatefulWidget {
+  const ProfileEditPage({super.key});
 
   @override
-  State<ProfileInfoPage> createState() => _ProfileInfoPageState();
+  State<ProfileEditPage> createState() => _ProfileEditPageState();
 }
 
-class _ProfileInfoPageState extends State<ProfileInfoPage> {
+class _ProfileEditPageState extends State<ProfileEditPage> {
   final ismController = TextEditingController();
   final familiyaController = TextEditingController();
-  String? tanlanganViloyat;
+  String? tanlanganViloyat = "Toshkent";
   File? rasm;
 
   final viloyatlar = [
@@ -32,6 +33,11 @@ class _ProfileInfoPageState extends State<ProfileInfoPage> {
     'Xorazm',
     'Qashqadaryo',
     'Surxondaryo',
+    'Sirdaryo',
+    'Andijon',
+    'Jizzax',
+    'Buxoro',
+    'Navoiy'
   ];
 
   Future<void> _rasmTanlash() async {
@@ -47,25 +53,7 @@ class _ProfileInfoPageState extends State<ProfileInfoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        leadingWidth: 75,
-        leading: Center(
-          child: IconButton(
-            onPressed: () {
-              context.pop();
-            },
-            icon: SvgPicture.asset(AppIcons.arrowLeft),
-          ),
-        ),
-        title: Text(
-          "Ma'lumotlarni kiriting",
-          style: TextStyle(
-            fontSize: 22.sp,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
+      appBar: AppBarWidget(title: "Ma’lumotlarni Taxrirlash",),
       body: Padding(
         padding: EdgeInsets.fromLTRB(24.w, 24.h, 24.w, 48.h),
         child: Column(
@@ -78,7 +66,9 @@ class _ProfileInfoPageState extends State<ProfileInfoPage> {
                   radius: 60.r,
                   backgroundImage: rasm != null ? FileImage(rasm!) : null,
                   backgroundColor: Colors.grey.shade200,
-                  child: rasm == null ? Icon(Icons.person, size: 60.sp, color: Colors.grey) : null,
+                  child: rasm == null
+                      ? Icon(Icons.person, size: 60.sp, color: Colors.grey)
+                      : null,
                 ),
                 Positioned(
                   bottom: 0,
@@ -96,17 +86,19 @@ class _ProfileInfoPageState extends State<ProfileInfoPage> {
             ),
             TextFieldPopular(
               controller: ismController,
-              hintText: "Ismingiz",
+              hintText: "olim mani ismim",
             ),
             TextFieldPopular(
               controller: familiyaController,
-              hintText: "Familyangiz",
+              hintText: "olim cola",
             ),
             DropdownButtonFormField<String>(
               value: tanlanganViloyat,
               decoration: InputDecoration(
                 hintText: "Viloyatingiz",
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(16.r), borderSide: BorderSide.none),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16.r),
+                    borderSide: BorderSide.none),
                 filled: true,
                 fillColor: AppColors.grenWhite,
               ),
