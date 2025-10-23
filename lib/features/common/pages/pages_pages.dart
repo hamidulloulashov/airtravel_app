@@ -1,0 +1,1 @@
+// menga ham kimdur yozib qolar

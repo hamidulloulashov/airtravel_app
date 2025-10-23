@@ -1,8 +1,13 @@
+import 'dart:async';
+import 'package:airtravel_app/core/client.dart';
+import 'package:airtravel_app/data/repositories/onboarding_repository.dart';
+import 'package:airtravel_app/features/onboarding/managers/onboarding_bloc.dart';
+import 'package:airtravel_app/features/onboarding/managers/onboarding_event.dart';
+import 'package:airtravel_app/features/onboarding/managers/onboarding_state.dart';
 import 'package:airtravel_app/features/onboarding/widgtes/onboarding_slade.dart';
 import 'package:airtravel_app/features/onboarding/widgtes/splash_page_widget.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class OnboardingPage extends StatefulWidget {
@@ -20,7 +25,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   @override
   void initState() {
     super.initState();
-    Timer(Duration(seconds: 3), () {
+    Timer(const Duration(seconds: 3), () {
       if (mounted) {
         setState(() {
           _showSplash = false;
@@ -29,105 +34,118 @@ class _OnboardingPageState extends State<OnboardingPage> {
     });
   }
 
-  final List<OnboardingData> _pages = [
-    OnboardingData(
-      title: 'We provide high quality products just for you',
-      imagePath: 'assets/first.jpg',
-    ),
-    OnboardingData(
-      title: 'Your satisfaction is our number one priority',
-      imagePath: 'assets/second.jpg',
-    ),
-    OnboardingData(
-      title: 'Let\'s fulfill your house needs with Funica right now!',
-      imagePath: 'assets/third.jpg',
-      showAutoLayout: true,
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
     if (_showSplash) {
-      return SplashPageWidget();
+      return const SplashPageWidget();
     }
 
-    return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-            child: PageView.builder(
-              controller: _pageController,
-              itemCount: _pages.length,
-              onPageChanged: (index) {
-                setState(() {
-                  _currentPage = index;
-                });
-              },
-              itemBuilder: (context, index) {
-                return OnboardingSlideWidget(
-                  data: _pages[index],
-                );
-              },
-            ),
-          ),
-          Container(
-            color: Colors.white,
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(
-                    _pages.length,
-                    (index) => Container(
-                      margin: EdgeInsets.symmetric(horizontal: 4),
-                      width: _currentPage == index ? 24 : 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: _currentPage == index
-                            ? Color(0xFF4CAF50)
-                            : Color(0xFF2C2C2C).withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
-                  ),
+    return BlocProvider(
+      create: (_) => OnboardingBloc(OnboardingRepository(ApiClient()))
+        ..add(LoadOnboardingEvent()),
+      child: Scaffold(
+        body: BlocBuilder<OnboardingBloc, OnboardingState>(
+          builder: (context, state) {
+            if (state is OnboardingLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is OnboardingError) {
+              return Center(
+                child: Text(
+                  "Xato: ${state.message}",
+                  style: const TextStyle(color: Colors.red),
                 ),
-                SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  height: 54,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (_currentPage < _pages.length - 1) {
-                        _pageController.nextPage(
-                          duration: Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
+              );
+            } else if (state is OnboardingLoaded) {
+              final pages = state.slides;
+              return Column(
+                children: [
+                  Expanded(
+                    child: PageView.builder(
+                      controller: _pageController,
+                      itemCount: pages.length,
+                      onPageChanged: (index) {
+                        setState(() {
+                          _currentPage = index;
+                        });
+                      },
+                      itemBuilder: (context, index) {
+                        final data = pages[index];
+                        return OnboardingSlideWidget(
+                          data: OnboardingData(
+                            title: data.title,
+                            imagePath: data.picture,
+                            showAutoLayout: index == pages.length - 1,
+                          ),
                         );
-                      } else {
-                       GoRouter.of(context).go("/home");
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF4CAF50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(27),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: Text(
-                      _currentPage == _pages.length - 1 ? 'Boshlash' : 'Keyingi',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
+                      },
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-        ],
+                  Container(
+                    color: Colors.white,
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(
+                            pages.length,
+                            (index) => Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 4),
+                              width: _currentPage == index ? 24 : 8,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                color: _currentPage == index
+                                    ? const Color(0xFF4CAF50)
+                                    : const Color(0xFF2C2C2C).withOpacity(0.3),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 54,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (_currentPage < pages.length - 1) {
+                                _pageController.nextPage(
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                );
+                              } else {
+                                GoRouter.of(context).go("/home");
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF4CAF50),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(27),
+                              ),
+                              elevation: 0,
+                            ),
+                            child: Text(
+                              _currentPage == pages.length - 1
+                                  ? 'Boshlash'
+                                  : 'Keyingi',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            }
+
+            return const SizedBox.shrink();
+          },
+        ),
       ),
     );
   }

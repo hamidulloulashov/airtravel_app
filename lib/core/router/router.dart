@@ -4,11 +4,9 @@ import 'package:airtravel_app/features/home/pages/home_page.dart';
 import 'package:airtravel_app/features/onboarding/pages/onboarding_page.dart';
 import 'package:airtravel_app/features/onboarding/pages/splash_page.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../features/auth/pages/profile_info_page.dart';
 import '../../features/auth/pages/sign_up_page.dart';
 import '../../features/auth/pages/verify_code_page.dart';
-
 final GoRouter router = GoRouter(
   initialLocation: Routes.splash,
   routes: [
