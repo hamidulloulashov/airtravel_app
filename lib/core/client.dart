@@ -1,12 +1,16 @@
 import 'package:airtravel_app/core/interceptor.dart';
 import 'package:airtravel_app/core/result.dart';
 import 'package:dio/dio.dart';
+
 class ApiClient {
+
+
   final Dio _dio;
+
   ApiClient()
     : _dio = Dio(
         BaseOptions(
-          baseUrl: "http://192.168.100.177:8888/api/v1",
+          baseUrl: "http://192.168.10.243:8000/api/v1",
           connectTimeout: const Duration(seconds: 10),
           receiveTimeout: const Duration(seconds: 15),
           headers: {
