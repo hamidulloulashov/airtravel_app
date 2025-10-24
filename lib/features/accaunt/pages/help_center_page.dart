@@ -23,9 +23,6 @@ class HelpCenterPage extends StatelessWidget {
               child: TabBarView(
                 children: [
                   FaqQuestionWidget(),
-                  Center(
-                    child: Text('FAQ (Tez-tez beriladigan savollar) kontenti shu yerda bo\'ladi'),
-                  ),
                   AloqaContent(),
                 ],
               ),
