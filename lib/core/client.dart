@@ -6,33 +6,32 @@ class ApiClient {
   final Dio _dio;
 
   ApiClient()
-      : _dio = Dio(
-          BaseOptions(
-            baseUrl: "http://10.0.2.2:8000/en/api/v1",
-            connectTimeout: const Duration(seconds: 10),
-            receiveTimeout: const Duration(seconds: 15),
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-            },
-            validateStatus: (status) {
-              return status != null && status < 500;
-            },
-          ),
-        ) {
-    _dio.interceptors.add(AppInterceptor());
-    _dio.interceptors.add(
-      LogInterceptor(
-        request: true,
-        requestBody: true,
-        requestHeader: true,
-        responseHeader: false,
-        responseBody: true,
-        error: true,
-      ),
-    );
-  }
-
+    : _dio = Dio(
+        BaseOptions(
+          baseUrl: "http://194.187.122.4:8000/en/api/v1",
+          connectTimeout: const Duration(seconds: 10),
+          receiveTimeout: const Duration(seconds: 15),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          validateStatus: (status) {
+            return status != null && status < 500;
+          },
+        ),
+      ) {
+  _dio.interceptors.add(AppInterceptor());
+  _dio.interceptors.add(
+    LogInterceptor(
+      request: true,
+      requestBody: true,
+      requestHeader: true,
+      responseHeader: false,
+      responseBody: true,
+      error: true,
+    ),
+  );
+}
   Future<Result<T>> get<T>(
     String path, {
     Map<String, dynamic>? queryParams,
