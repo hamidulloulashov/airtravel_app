@@ -34,7 +34,11 @@ packages:
     source: hosted
     version: "2.13.0"
   bloc:
+<<<<<<< HEAD
     dependency: transitive
+=======
+    dependency: "direct main"
+>>>>>>> c545aa818f8e661978b01cdb2a20982eb80e92bc
     description:
       name: bloc
       sha256: a2cebb899f91d36eeeaa55c7b20b5915db5a9df1b8fd4a3c9c825e22e474537d
@@ -193,6 +197,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
+  equatable:
+    dependency: "direct main"
+    description:
+      name: equatable
+      sha256: "567c64b3cb4cf82397aac55f4f0cbd3ca20d77c6c03bedbc4ceaddc08904aef7"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.7"
   fake_async:
     dependency: transitive
     description:
@@ -544,6 +556,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
+<<<<<<< HEAD
   package_config:
     dependency: transitive
     description:
@@ -552,6 +565,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
+=======
+>>>>>>> c545aa818f8e661978b01cdb2a20982eb80e92bc
   path:
     dependency: transitive
     description:
@@ -624,6 +639,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.8"
+<<<<<<< HEAD
   pool:
     dependency: transitive
     description:
@@ -632,6 +648,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.2"
+=======
+>>>>>>> c545aa818f8e661978b01cdb2a20982eb80e92bc
   provider:
     dependency: transitive
     description:
@@ -640,6 +658,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.5+1"
+<<<<<<< HEAD
   pub_semver:
     dependency: transitive
     description:
@@ -656,6 +675,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.0"
+=======
+>>>>>>> c545aa818f8e661978b01cdb2a20982eb80e92bc
   shared_preferences:
     dependency: "direct main"
     description:
