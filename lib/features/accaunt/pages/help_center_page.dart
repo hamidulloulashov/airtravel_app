@@ -35,7 +35,6 @@ class HelpCenterPage extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildTabBar() {
     return Column(
       children: [
