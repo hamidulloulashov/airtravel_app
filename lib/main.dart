@@ -12,14 +12,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: Size(428, 926),
-      child: MaterialApp.router(
-        debugShowCheckedModeBanner: false,
-        title: 'My Cooking App',
-        theme: AppThemes.lightTheme,
-        darkTheme: AppThemes.darkTheme,
-        routerConfig: AppRouter.router,
-      ),
+      designSize: const Size(428, 926),
+      builder: (context, child) {
+        return MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          title: 'My Cooking App',
+          theme: AppThemes.lightTheme,
+          darkTheme: AppThemes.darkTheme,
+          routerConfig: AppRouter.router,
+        );
+      },
     );
   }
 }
