@@ -59,6 +59,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
               final pages = state.slides;
               return Column(
                 children: [
+                
                   Expanded(
                     child: PageView.builder(
                       controller: _pageController,
