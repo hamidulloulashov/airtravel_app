@@ -1,6 +1,7 @@
 import 'package:airtravel_app/core/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 class OnboardingSlideWidget extends StatelessWidget {
   final OnboardingData data;
 
@@ -22,10 +23,9 @@ class OnboardingSlideWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 image: DecorationImage(
                   fit: BoxFit.fill,
-                  image: AssetImage(data.imagePath),
+                  image: NetworkImage(data.imagePath),
                 ),
               ),
-              
             ),
           ),
           Expanded(
@@ -35,15 +35,19 @@ class OnboardingSlideWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    data.title,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 35,
-                      fontWeight: FontWeight.w700,
-                      color: Color.fromARGB(255, 90, 90, 90),
-                      height: 1.3.h,
-                    ),
-                  ),
+  data.title,
+  style: const TextStyle(
+    fontSize: 40,
+    fontWeight: FontWeight.bold,
+    color: Colors.black,
+  ),
+  textAlign: TextAlign.center,
+  maxLines: 2, 
+  overflow: TextOverflow.ellipsis, 
+  softWrap: true, 
+),
+
+
                 ],
               ),
             ),
