@@ -52,7 +52,7 @@ class ApiClient {
   Future<Result<T>> post<T>(
     String path, {
     dynamic data,
-    Map<String, dynamic>? queryParams,
+    Map<String, dynamic>? queryParams, required Options options,
   }) async {
     try {
       final response =
@@ -112,7 +112,7 @@ class ApiClient {
   Future<Result<T>> patch<T>(
     String path, {
     dynamic data,
-    Map<String, dynamic>? queryParams,
+    Map<String, dynamic>? queryParams, required Options options,
   }) async {
     try {
       final response =
