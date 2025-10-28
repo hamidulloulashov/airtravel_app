@@ -53,7 +53,7 @@ class ApiClient {
   Future<Result<T>> post<T>(
     String path, {
     dynamic data,
-    Map<String, dynamic>? queryParams,
+    Map<String, dynamic>? queryParams, required Options options,
   }) async {
     try {
       final response = await _dio.post(path, data: data, queryParameters: queryParams);
@@ -110,7 +110,7 @@ class ApiClient {
   Future<Result<T>> patch<T>(
     String path, {
     dynamic data,
-    Map<String, dynamic>? queryParams,
+    Map<String, dynamic>? queryParams, required Options options,
   }) async {
     try {
       final response = await _dio.patch(path, data: data, queryParameters: queryParams);

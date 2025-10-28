@@ -28,15 +28,15 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       path: Routes.signUp,
-      builder: (context, state) => const SignUpPage(),
+      builder: (context, state) => const SignUpPage(),Q
     ),
     GoRoute(
       path: Routes.verifyCode,
-      builder: (context, state) => const VerifyCodePage(),
+      builder: (context, state) => const VerifyCodePage(phoneNumber: '',),
     ),
     GoRoute(
       path: Routes.profileInfo,
-      builder: (context, state) => const ProfileInfoPage(),
+      builder: (context, state) => const ProfileInfoPage(extra: {},),
     ),
     GoRoute(
       path: Routes.profile,
