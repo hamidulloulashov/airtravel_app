@@ -28,7 +28,7 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       path: Routes.signUp,
-      builder: (context, state) => const SignUpPage(),Q
+      builder: (context, state) => const SignUpPage(),
     ),
     GoRoute(
       path: Routes.verifyCode,
