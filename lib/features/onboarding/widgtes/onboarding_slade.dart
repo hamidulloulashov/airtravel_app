@@ -1,6 +1,5 @@
 import 'package:airtravel_app/core/utils/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class OnboardingSlideWidget extends StatelessWidget {
   final OnboardingData data;
@@ -16,6 +15,7 @@ class OnboardingSlideWidget extends StatelessWidget {
       color: AppColors.white,
       child: Column(
         children: [
+          Image.network(data.imagePath),
           Expanded(
             flex: 3,
             child: Container(

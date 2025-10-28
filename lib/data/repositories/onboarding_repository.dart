@@ -13,8 +13,7 @@ class OnboardingRepository {
       (data) {
         final slides = data
             .map((item) => OnboardingModel.fromJson(item))
-            .toList()
-            .cast<OnboardingModel>();
+            .toList(); 
         return Result.ok(slides);
       },
     );
