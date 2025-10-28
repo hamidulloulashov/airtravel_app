@@ -38,10 +38,10 @@ class OnboardingSlideWidget extends StatelessWidget {
                   );
                 },
                 errorBuilder: (context, error, stackTrace) {
-                  return Center(
+                  return const Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
+                      children: [
                         Icon(Icons.error_outline, size: 48, color: Colors.red),
                         SizedBox(height: 8),
                         Text(
@@ -58,21 +58,20 @@ class OnboardingSlideWidget extends StatelessWidget {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    data.prompt, // title o'rniga prompt
+              child: Center(
+                child: SingleChildScrollView( // Scroll qilish imkoniyati
+                  child: Text(
+                    data.prompt,
                     style: const TextStyle(
-                      fontSize: 32, // 40 dan kichikroq qildim
+                      fontSize: 28, // Biroz kichikroq qildim
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
+                      height: 1.3, // Qatorlar orasidagi masofa
                     ),
                     textAlign: TextAlign.center,
-                    maxLines: 3, // 2 dan 3 ga oshirdim
-                    overflow: TextOverflow.ellipsis,
+                    // maxLines va overflow ni olib tashladim
                   ),
-                ],
+                ),
               ),
             ),
           ),
@@ -86,24 +85,23 @@ class OnboardingData {
   final int id;
   final String? title;
   final String imagePath;
-  final String prompt; // Bu kerak bo'lgan maydon
+  final String prompt;
   final bool showAutoLayout;
 
   OnboardingData({
     required this.id,
     this.title,
     required this.imagePath,
-    required this.prompt, // Required qildim
+    required this.prompt,
     this.showAutoLayout = false,
   });
 
-  // JSON dan parse qilish uchun factory constructor
   factory OnboardingData.fromJson(Map<String, dynamic> json) {
     return OnboardingData(
       id: json['id'],
       title: json['title'],
       imagePath: json['picture'],
-      prompt: json['prompt'] ?? '', // Default value
+      prompt: json['prompt'] ?? '',
     );
   }
 }
