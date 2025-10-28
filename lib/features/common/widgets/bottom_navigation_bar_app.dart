@@ -1,4 +1,3 @@
-
 import 'package:airtravel_app/core/router/routes.dart';
 import 'package:airtravel_app/core/utils/app_colors.dart';
 import 'package:airtravel_app/core/utils/app_icons.dart';
