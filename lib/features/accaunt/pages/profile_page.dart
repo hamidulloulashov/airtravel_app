@@ -4,6 +4,7 @@ import 'package:airtravel_app/core/utils/app_colors.dart';
 import 'package:airtravel_app/core/utils/app_icons.dart';
 import 'package:airtravel_app/features/accaunt/widgets/profile_item_widget.dart';
 import 'package:airtravel_app/features/common/widgets/bottom_navigation_bar_app.dart';
+import 'package:airtravel_app/features/common/widgets/text_button_popular.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -142,7 +143,54 @@ class _ProfilePageState extends State<ProfilePage> {
                       icon: AppIcons.send,
                     ),
                     ProfileItemWidget(
-                      onTap: () {},
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (context) => Padding(
+                            padding: EdgeInsetsGeometry.symmetric(horizontal: 24.w, vertical: 35.h),
+                            child: SizedBox(
+                              width: double.infinity,
+                              height: 290.h,
+                              child: Column(
+                                spacing: 48.h,
+                                children: [
+                                  Text(
+                                    'Chiqish',
+                                    style: TextStyle(
+                                      fontSize: 24.sp,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColors.error,
+                                    ),
+                                  ),
+                                  Text(
+                                    textAlign: TextAlign.center,
+                                    'Haqiqatan ham tizimdan chiqmoqchimisiz?',
+                                    style: TextStyle(
+                                      fontSize: 20.sp,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColors.grey,
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      TextButtonPopular(
+                                        title: 'Yo’q',
+                                        width: 184,
+                                        buttonColor: AppColors.cardGrey,
+                                        textColor: AppColors.containerBlack,
+                                      ),
+                                      TextButtonPopular(
+                                        title: 'Ha',
+                                        width: 184,
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                       textColor: AppColors.error,
                       iconColorFilter: ColorFilter.mode(
                         AppColors.error,
