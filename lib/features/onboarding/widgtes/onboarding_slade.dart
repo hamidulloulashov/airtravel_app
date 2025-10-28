@@ -19,11 +19,39 @@ class OnboardingSlideWidget extends StatelessWidget {
             flex: 3,
             child: Container(
               width: double.infinity,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  fit: BoxFit.fill,
-                  image: NetworkImage(data.imagePath),
-                ),
+              decoration: const BoxDecoration(
+                color: Colors.grey,
+              ),
+              child: Image.network(
+                data.imagePath,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Center(
+                    child: CircularProgressIndicator(
+                      value: loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes!
+                          : null,
+                    ),
+                  );
+                },
+                errorBuilder: (context, error, stackTrace) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Icon(Icons.error_outline, size: 48, color: Colors.red),
+                        SizedBox(height: 8),
+                        Text(
+                          'Rasmni yuklashda xatolik',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
             ),
           ),
@@ -34,19 +62,16 @@ class OnboardingSlideWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-  data.title,
-  style: const TextStyle(
-    fontSize: 40,
-    fontWeight: FontWeight.bold,
-    color: Colors.black,
-  ),
-  textAlign: TextAlign.center,
-  maxLines: 2, 
-  overflow: TextOverflow.ellipsis, 
-  softWrap: true, 
-),
-
-
+                    data.prompt, // title o'rniga prompt
+                    style: const TextStyle(
+                      fontSize: 32, // 40 dan kichikroq qildim
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 3, // 2 dan 3 ga oshirdim
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ],
               ),
             ),
@@ -58,13 +83,27 @@ class OnboardingSlideWidget extends StatelessWidget {
 }
 
 class OnboardingData {
-  final String title;
+  final int id;
+  final String? title;
   final String imagePath;
+  final String prompt; // Bu kerak bo'lgan maydon
   final bool showAutoLayout;
 
   OnboardingData({
-    required this.title,
+    required this.id,
+    this.title,
     required this.imagePath,
+    required this.prompt, // Required qildim
     this.showAutoLayout = false,
   });
+
+  // JSON dan parse qilish uchun factory constructor
+  factory OnboardingData.fromJson(Map<String, dynamic> json) {
+    return OnboardingData(
+      id: json['id'],
+      title: json['title'],
+      imagePath: json['picture'],
+      prompt: json['prompt'] ?? '', // Default value
+    );
+  }
 }

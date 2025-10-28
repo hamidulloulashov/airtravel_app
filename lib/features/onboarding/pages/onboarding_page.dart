@@ -76,6 +76,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             title: data.title,
                             imagePath: data.picture,
                             showAutoLayout: index == pages.length - 1,
+                            prompt: data.prompt,
+                            id: data.id
                           ),
                         );
                       },
