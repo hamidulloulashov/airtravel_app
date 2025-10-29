@@ -116,7 +116,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       iconBack: AppIcons.arrowRightGreen,
                     ),
                     ProfileItemWidget(
-                      onTap: () {},
+                      onTap: () {
+                        context.push(Routes.language);
+                      },
                       text: 'Ilova tili',
                       icon: AppIcons.moreCircle,
                       iconBack: AppIcons.arrowRightGreen,
@@ -172,8 +174,12 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ),
                                   ),
                                   Row(
+                                    spacing: 12.w,
                                     children: [
                                       TextButtonPopular(
+                                        onPressed: (){
+                                          context.pop();
+                                        },
                                         title: 'Yo’q',
                                         width: 184,
                                         buttonColor: AppColors.cardGrey,
