@@ -15,7 +15,8 @@ class OnboardingSlideWidget extends StatelessWidget {
       color: AppColors.white,
       child: Column(
         children: [
-          Image.network(data.imagePath),
+          
+          
           Expanded(
             flex: 3,
             child: Container(
@@ -60,17 +61,16 @@ class OnboardingSlideWidget extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
               child: Center(
-                child: SingleChildScrollView( // Scroll qilish imkoniyati
+                child: SingleChildScrollView(
                   child: Text(
                     data.prompt,
                     style: const TextStyle(
-                      fontSize: 28, // Biroz kichikroq qildim
+                      fontSize: 28,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
-                      height: 1.3, // Qatorlar orasidagi masofa
+                      height: 1.3,
                     ),
                     textAlign: TextAlign.center,
-                    // maxLines va overflow ni olib tashladim
                   ),
                 ),
               ),
