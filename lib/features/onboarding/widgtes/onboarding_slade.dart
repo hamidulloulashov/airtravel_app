@@ -15,6 +15,7 @@ class OnboardingSlideWidget extends StatelessWidget {
       color: AppColors.white,
       child: Column(
         children: [
+          Image.network(data.imagePath),
           Expanded(
             flex: 3,
             child: Container(

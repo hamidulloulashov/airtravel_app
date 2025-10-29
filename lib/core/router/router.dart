@@ -1,5 +1,6 @@
 import 'package:airtravel_app/core/router/routes.dart';
 import 'package:airtravel_app/features/accaunt/pages/help_center_page.dart';
+import 'package:airtravel_app/features/accaunt/pages/language_page.dart';
 import 'package:airtravel_app/features/accaunt/pages/notification_settings_page.dart';
 import 'package:airtravel_app/features/accaunt/pages/privacy_policy_page.dart';
 import 'package:airtravel_app/features/accaunt/pages/profile_edit_page.dart';
@@ -11,11 +12,16 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/pages/profile_info_page.dart';
 import '../../features/auth/pages/sign_up_page.dart';
 import '../../features/auth/pages/verify_code_page.dart';
+
 final GoRouter router = GoRouter(
-  initialLocation: Routes.splash,
+  initialLocation: Routes.signUp,
   routes: [
     GoRoute(
       path: Routes.splash,
+      builder: (context, state) => const SplashPage(),
+    ),
+    GoRoute(
+      path: Routes.login,
       builder: (context, state) => const SplashPage(),
     ),
     GoRoute(
@@ -30,14 +36,40 @@ final GoRouter router = GoRouter(
       path: Routes.signUp,
       builder: (context, state) => const SignUpPage(),
     ),
-    GoRoute(
-      path: Routes.verifyCode,
-      builder: (context, state) => const VerifyCodePage(phoneNumber: '',),
-    ),
+
+    // ✅ ProfileInfo - Map yoki String qabul qiladi
     GoRoute(
       path: Routes.profileInfo,
-      builder: (context, state) => const ProfileInfoPage(extra: {},),
+      builder: (context, state) {
+        final extra = state.extra;
+
+        // ✅ extra ni handle qilamiz
+        Map<String, dynamic> params;
+
+        if (extra is Map<String, dynamic>) {
+          // Map kelsa to'g'ridan-to'g'ri ishlatamiz
+          params = extra;
+          print('🔍 Router ProfileInfo: Map = $params');
+        } else if (extra is String) {
+          // String kelsa Map ga o'giramiz
+          params = {
+            'phoneNumber': extra,
+            'isNewUser': true,
+          };
+          print('🔍 Router ProfileInfo: Telefon = $extra');
+        } else {
+          // Hech narsa kelmasa default qiymat
+          params = {
+            'phoneNumber': '',
+            'isNewUser': true,
+          };
+          print('⚠️ Router ProfileInfo: extra yo\'q');
+        }
+
+        return ProfileInfoPage(extra: params);
+      },
     ),
+
     GoRoute(
       path: Routes.profile,
       builder: (context, state) => const ProfilePage(),
@@ -57,6 +89,19 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: Routes.helpCenter,
       builder: (context, state) => const HelpCenterPage(),
+    ),
+    // ✅ VerifyCode - String qabul qiladi
+    GoRoute(
+      path: Routes.verifyCode,
+      builder: (context, state) {
+        final phoneNumber = state.extra as String? ?? '';
+        print('🔍 Router VerifyCode: Telefon = $phoneNumber');
+        return VerifyCodePage(phoneNumber: phoneNumber);
+      },
+    ),
+    GoRoute(
+      path: Routes.language,
+      builder: (context, state) => const LanguagePage(),
     )
   ],
 );

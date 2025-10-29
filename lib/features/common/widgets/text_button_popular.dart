@@ -9,11 +9,15 @@ class TextButtonPopular extends StatelessWidget {
     this.onPressed = _defaultOnPressed,
     this.width = 380,
     this.height = 58,
+    this.buttonColor = AppColors.succesGren,
+    this.textColor = AppColors.white
   });
 
   final VoidCallback onPressed;
   final String title;
   final int width, height;
+  final Color buttonColor;
+  final Color textColor;
 
   static void _defaultOnPressed() {}
 
@@ -21,7 +25,7 @@ class TextButtonPopular extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       style: TextButton.styleFrom(
-        backgroundColor: AppColors.succesGren,
+        backgroundColor:  buttonColor,
         foregroundColor: AppColors.white,
         fixedSize: Size(width.w, height.h),
         shape: RoundedRectangleBorder(
@@ -31,7 +35,7 @@ class TextButtonPopular extends StatelessWidget {
       onPressed: onPressed,
       child: Text(
         title,
-        // style: style,
+        style: TextStyle(color: textColor),
       ),
     );
   }

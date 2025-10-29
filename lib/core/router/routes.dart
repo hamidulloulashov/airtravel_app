@@ -11,4 +11,5 @@ class Routes {
   static const privacyPolicy = "/privacyPolicy";
   static const notificationSettings = '/notificationSettings';
   static const helpCenter = '/helpCenter';
+  static const language = '/language';
 }
