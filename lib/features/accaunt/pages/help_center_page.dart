@@ -17,7 +17,7 @@ class HelpCenterPage extends StatelessWidget {
         appBar: AppBarWidget(title: 'Call Markaz'),
         body: Column(
           children: [
-            _buildTabBar(),
+            buildTabBar(),
             const Expanded(
               child: TabBarView(
                 children: [
@@ -31,7 +31,7 @@ class HelpCenterPage extends StatelessWidget {
       ),
     );
   }
-  Widget _buildTabBar() {
+  buildTabBar() {
     return Padding(
       padding: EdgeInsetsGeometry.symmetric(horizontal: 24.w),
       child: Column(
@@ -43,13 +43,9 @@ class HelpCenterPage extends StatelessWidget {
             ],
             indicatorColor: AppColors.containerBlack,
             labelColor: AppColors.containerGreen,
-            // Aktiv tab yozuvi rangi
             unselectedLabelColor: AppColors.textGrey,
-            // Noaktiv tab yozuvi rangi
             indicatorWeight: 4.h,
-            // Indikator chizig'i qalinligi
             indicatorSize: TabBarIndicatorSize.tab,
-            // Indikatorni tab kengligida qilish
             labelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
 
             unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal),

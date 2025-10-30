@@ -6,6 +6,7 @@ import 'package:airtravel_app/features/accaunt/managers/helpCenterBloc/help_cent
 import 'package:airtravel_app/features/accaunt/managers/helpCenterBloc/help_center_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class FaqQuestionWidget extends StatelessWidget {
   const FaqQuestionWidget({
@@ -30,15 +31,17 @@ class FaqQuestionWidget extends StatelessWidget {
           }
           final faq = state.faqs;
           return Column(
+            spacing: 24.h,
             children: [
+              SizedBox(),
               ...List.generate(faq.length, (index) {
                 final item = faq[index];
                 return Padding(
-                  padding: const EdgeInsets.only(bottom: 10.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 24,),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8.0),
+                      color: AppColors.borderGrey,
+                      borderRadius: BorderRadius.circular(20.r),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey.withOpacity(0.1),
@@ -62,7 +65,7 @@ class FaqQuestionWidget extends StatelessWidget {
                         collapsedIconColor: questionColor,
                         children: <Widget>[
                           Padding(
-                            padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 12.0),
+                            padding: EdgeInsetsGeometry.symmetric(horizontal: 24, vertical: 24),
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
