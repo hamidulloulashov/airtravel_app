@@ -9,6 +9,7 @@ import 'package:airtravel_app/features/onboarding/widgtes/splash_page_widget.dar
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({Key? key}) : super(key: key);
@@ -25,13 +26,28 @@ class _OnboardingPageState extends State<OnboardingPage> {
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 3), () {
+    _checkTokenAndNavigate();
+  }
+
+  Future<void> _checkTokenAndNavigate() async {
+    await Future.delayed(const Duration(seconds: 3));
+    
+    if (!mounted) return;
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token'); 
+    
+    if (token != null && token.isNotEmpty) {
+      if (mounted) {
+        GoRouter.of(context).go("/home");
+      }
+    } else {
       if (mounted) {
         setState(() {
           _showSplash = false;
         });
       }
-    });
+    }
   }
 
   @override
@@ -59,7 +75,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
               final pages = state.slides;
               return Column(
                 children: [
-                
                   Expanded(
                     child: PageView.builder(
                       controller: _pageController,
@@ -117,7 +132,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                                   curve: Curves.easeInOut,
                                 );
                               } else {
-                                GoRouter.of(context).go("/home");
+                                GoRouter.of(context).go("/signUp"); 
                               }
                             },
                             style: ElevatedButton.styleFrom(

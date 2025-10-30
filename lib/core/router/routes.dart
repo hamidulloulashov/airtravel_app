@@ -3,7 +3,7 @@ class Routes {
   static const login = "/login";
   static const home = "/home";
   static const onboarding = "/onboarding";
-  static const signUp = "/sign-up";
+  static const signUp = "/signUp";
   static const verifyCode = "/verify-code";
   static const profileInfo = "/profile-info";
   static const profile = "/profile";

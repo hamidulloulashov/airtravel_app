@@ -3,20 +3,16 @@ import 'package:flutter/material.dart';
 
 class OnboardingSlideWidget extends StatelessWidget {
   final OnboardingData data;
-
   const OnboardingSlideWidget({
     Key? key,
     required this.data,
   }) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Container(
       color: AppColors.white,
       child: Column(
         children: [
-          
-          
           Expanded(
             flex: 3,
             child: Container(
