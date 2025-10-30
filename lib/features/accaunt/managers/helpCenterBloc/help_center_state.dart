@@ -16,7 +16,7 @@ abstract class HelpCenterState with _$HelpCenterState {
   factory HelpCenterState.initial() => HelpCenterState(
     status: Status.loading,
     errorMessage: null,
-    contacts: const [],
-    faqs: const [],
+    contacts: [],
+    faqs:  [],
   );
 }
