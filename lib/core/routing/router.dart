@@ -14,7 +14,7 @@ import '../../features/auth/pages/sign_up_page.dart';
 import '../../features/auth/pages/verify_code_page.dart';
 
 final GoRouter router = GoRouter(
-  initialLocation: Routes.profile,
+  initialLocation: Routes.signUp,
   routes: [
     GoRoute(
       path: Routes.splash,
