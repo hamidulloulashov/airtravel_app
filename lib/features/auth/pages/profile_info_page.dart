@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:airtravel_app/core/router/routes.dart';
+import 'package:airtravel_app/core/routing/routes.dart';
 import 'package:airtravel_app/core/utils/app_colors.dart';
 import 'package:airtravel_app/core/utils/app_icons.dart';
 import 'package:airtravel_app/features/auth/managers/aut_state.dart';

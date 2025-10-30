@@ -1,5 +1,6 @@
-import 'package:airtravel_app/core/router/routes.dart';
+import 'package:airtravel_app/core/routing/routes.dart';
 import 'package:airtravel_app/features/accaunt/pages/help_center_page.dart';
+import 'package:airtravel_app/features/accaunt/pages/language_page.dart';
 import 'package:airtravel_app/features/accaunt/pages/notification_settings_page.dart';
 import 'package:airtravel_app/features/accaunt/pages/privacy_policy_page.dart';
 import 'package:airtravel_app/features/accaunt/pages/profile_edit_page.dart';
@@ -13,7 +14,7 @@ import '../../features/auth/pages/sign_up_page.dart';
 import '../../features/auth/pages/verify_code_page.dart';
 
 final GoRouter router = GoRouter(
-  initialLocation: Routes.splash,
+  initialLocation: Routes.profile,
   routes: [
     GoRoute(
       path: Routes.splash,
@@ -35,16 +36,16 @@ final GoRouter router = GoRouter(
       path: Routes.signUp,
       builder: (context, state) => const SignUpPage(),
     ),
-  
+
     // ✅ ProfileInfo - Map yoki String qabul qiladi
     GoRoute(
       path: Routes.profileInfo,
       builder: (context, state) {
         final extra = state.extra;
-        
+
         // ✅ extra ni handle qilamiz
         Map<String, dynamic> params;
-        
+
         if (extra is Map<String, dynamic>) {
           // Map kelsa to'g'ridan-to'g'ri ishlatamiz
           params = extra;
@@ -64,11 +65,11 @@ final GoRouter router = GoRouter(
           };
           print('⚠️ Router ProfileInfo: extra yo\'q');
         }
-        
+
         return ProfileInfoPage(extra: params);
       },
     ),
-    
+
     GoRoute(
       path: Routes.profile,
       builder: (context, state) => const ProfilePage(),
@@ -89,7 +90,7 @@ final GoRouter router = GoRouter(
       path: Routes.helpCenter,
       builder: (context, state) => const HelpCenterPage(),
     ),
-    
+
     // ✅ VerifyCode - String qabul qiladi
     GoRoute(
       path: Routes.verifyCode,
@@ -99,5 +100,9 @@ final GoRouter router = GoRouter(
         return VerifyCodePage(phoneNumber: phoneNumber);
       },
     ),
+    GoRoute(
+      path: Routes.language,
+      builder: (context, state) => const LanguagePage(),
+    )
   ],
 );
