@@ -37,33 +37,23 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const SignUpPage(),
     ),
 
-    // ✅ ProfileInfo - Map yoki String qabul qiladi
     GoRoute(
       path: Routes.profileInfo,
       builder: (context, state) {
         final extra = state.extra;
-
-        // ✅ extra ni handle qilamiz
         Map<String, dynamic> params;
-
         if (extra is Map<String, dynamic>) {
-          // Map kelsa to'g'ridan-to'g'ri ishlatamiz
           params = extra;
-          print('🔍 Router ProfileInfo: Map = $params');
         } else if (extra is String) {
-          // String kelsa Map ga o'giramiz
           params = {
             'phoneNumber': extra,
             'isNewUser': true,
           };
-          print('🔍 Router ProfileInfo: Telefon = $extra');
         } else {
-          // Hech narsa kelmasa default qiymat
           params = {
             'phoneNumber': '',
             'isNewUser': true,
           };
-          print('⚠️ Router ProfileInfo: extra yo\'q');
         }
 
         return ProfileInfoPage(extra: params);
@@ -90,13 +80,10 @@ final GoRouter router = GoRouter(
       path: Routes.helpCenter,
       builder: (context, state) => const HelpCenterPage(),
     ),
-
-    // ✅ VerifyCode - String qabul qiladi
     GoRoute(
       path: Routes.verifyCode,
       builder: (context, state) {
         final phoneNumber = state.extra as String? ?? '';
-        print('🔍 Router VerifyCode: Telefon = $phoneNumber');
         return VerifyCodePage(phoneNumber: phoneNumber);
       },
     ),

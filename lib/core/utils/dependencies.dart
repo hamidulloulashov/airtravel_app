@@ -10,24 +10,26 @@ import 'package:airtravel_app/features/onboarding/managers/onboarding_bloc.dart'
 import 'package:airtravel_app/data/repositories/onboarding_repository.dart';
 
 class AppDependencies {
-  static final ApiClient _client = ApiClient();
+  static final ApiClient client = ApiClient();
 
   static List<BlocProvider> providers = [
     BlocProvider<AuthBloc>(
-      create: (context) => AuthBloc(AuthRepository(_client)),
+      create: (context) => AuthBloc(AuthRepository(client)),
     ),
     BlocProvider<OnboardingBloc>(
-      create: (context) => OnboardingBloc(OnboardingRepository(_client)),
+      create: (context) => OnboardingBloc(OnboardingRepository(client)),
     ),
     BlocProvider<UserBloc>(
       create: (context) => UserBloc(
-        userRepository: UserRepository(_client),
+        userRepository: UserRepository(client),
       )..add(FetchUserData()),
     ),
     BlocProvider<BaseBloc>(
       create: (context) => BaseBloc(
-        baseRepo: BaseRepository(_client)
-      )..add(BaseFetchRegions()),
+        baseRepo: BaseRepository(client),
+      )..add(
+          BaseFetchRegions(),
+        ),
     )
   ];
 }

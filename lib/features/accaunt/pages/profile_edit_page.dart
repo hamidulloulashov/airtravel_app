@@ -61,7 +61,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
 
               if (selectedRegion == null && regionList.isNotEmpty && user.region != null) {
                 selectedRegion = regionList.firstWhere(
-                      (r) => r.id == user.region, // bu yerda id == 1 kabi solishtiriladi
+                      (r) => r.id == user.region, // qisqasi bu joyda id == 1 shunaqa ish qiladida yee
                   orElse: () => regionList.first,
                 );
               }
@@ -144,7 +144,6 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                           'last_name': lastNameController.text,
                           'region': selectedRegion?.id,
                         };
-                        print("PUT uchun yuboriladigan data: $updatedData");
                         context.go(Routes.profile);
                       },
                       title: 'Saqlash',

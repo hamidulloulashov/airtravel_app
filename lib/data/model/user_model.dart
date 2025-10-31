@@ -1,20 +1,20 @@
 import 'package:airtravel_app/data/model/region_model.dart';
 
 class UserModel {
-  final String? firstName;
-  final String? lastName;
-  final RegionModel? region;
-  final String? phoneNumber;
-  final bool? isVerified;
-  final double? balance;
+  final String firstName;
+  final String lastName;
+  final RegionModel region;
+  final String phoneNumber;
+  final bool isVerified;
+  final double balance;
 
   UserModel({
-    this.firstName,
-    this.lastName,
-    this.region,
-    this.phoneNumber,
-    this.isVerified,
-    this.balance,
+    required this.firstName,
+    required this.lastName,
+    required this.region,
+    required this.phoneNumber,
+    required this.isVerified,
+    required this.balance,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -27,13 +27,4 @@ class UserModel {
       balance: (json['balance'] ?? 0).toDouble(),
     );
   }
-
-  Map<String, dynamic> toJson() => {
-    'first_name': firstName,
-    'last_name': lastName,
-    'region': region,
-    'phone_number': phoneNumber,
-    'is_verified': isVerified,
-    'balance': balance,
-  };
 }

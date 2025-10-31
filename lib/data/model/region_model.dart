@@ -13,8 +13,5 @@ class RegionModel {
       title: json['title'],
     );
   }
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'title': title,
-  };
+
 }

@@ -18,7 +18,7 @@ class HelpCenterPage extends StatelessWidget {
         body: Column(
           children: [
             buildTabBar(),
-            const Expanded(
+            Expanded(
               child: TabBarView(
                 children: [
                   FaqQuestionWidget(),
@@ -37,7 +37,7 @@ class HelpCenterPage extends StatelessWidget {
       child: Column(
         children: [
           TabBar(
-            tabs: const [
+            tabs: [
               Tab(text: 'FAQ'),
               Tab(text: 'Aloqa'),
             ],
@@ -46,11 +46,11 @@ class HelpCenterPage extends StatelessWidget {
             unselectedLabelColor: AppColors.textGrey,
             indicatorWeight: 4.h,
             indicatorSize: TabBarIndicatorSize.tab,
-            labelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+            labelStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
 
-            unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal),
+            unselectedLabelStyle:  TextStyle(fontWeight: FontWeight.normal),
           ),
-          const Divider(height: 0, thickness: 1, color: Colors.grey),
+          Divider(height: 0, thickness: 1, color: Colors.grey),
         ],
       ),
     );

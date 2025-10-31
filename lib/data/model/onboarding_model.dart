@@ -14,9 +14,9 @@ class OnboardingModel {
   factory OnboardingModel.fromJson(Map<String, dynamic> json) {
     return OnboardingModel(
       id: json['id'],
-      title: json['title'] ?? '',  
-      picture: json['picture'] ?? '',
-      prompt: json['prompt'] ?? '',
+      title: json['title'],
+      picture: json['picture'],
+      prompt: json['prompt'],
     );
   }
 }

@@ -44,7 +44,7 @@ class FaqQuestionWidget extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20.r),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.1),
+                          color: AppColors.borderGrey,
                           spreadRadius: 1,
                           blurRadius: 3,
                           offset: const Offset(0, 2),
