@@ -1,4 +1,4 @@
-import 'package:airtravel_app/core/router/routes.dart';
+import 'package:airtravel_app/core/routing/routes.dart';
 import 'package:airtravel_app/features/accaunt/pages/help_center_page.dart';
 import 'package:airtravel_app/features/accaunt/pages/language_page.dart';
 import 'package:airtravel_app/features/accaunt/pages/notification_settings_page.dart';
@@ -20,29 +20,41 @@ final GoRouter router = GoRouter(
       path: Routes.splash,
       builder: (context, state) => const SplashPage(),
     ),
+
     GoRoute(
       path: Routes.login,
       builder: (context, state) => const SplashPage(),
     ),
+
     GoRoute(
       path: Routes.home,
       builder: (context, state) => const HomePage(),
     ),
+
     GoRoute(
       path: Routes.onboarding,
       builder: (context, state) => const OnboardingPage(),
     ),
+
     GoRoute(
       path: Routes.signUp,
       builder: (context, state) => const SignUpPage(),
     ),
-      GoRoute(
+
+    GoRoute(
+      path: Routes.verifyCode,
+      builder: (context, state) {
+        final phoneNumber = state.extra as String? ?? '';
+        return VerifyCodePage(phoneNumber: phoneNumber);
+      },
+    ),
+
+    GoRoute(
       path: Routes.profileInfo,
       builder: (context, state) {
         final extra = state.extra;
-        
         Map<String, dynamic> params;
-        
+
         if (extra is Map<String, dynamic>) {
           params = extra;
         } else if (extra is String) {
@@ -56,42 +68,39 @@ final GoRouter router = GoRouter(
             'isNewUser': true,
           };
         }
-        
+
         return ProfileInfoPage(extra: params);
       },
     ),
-    
+
     GoRoute(
       path: Routes.profile,
       builder: (context, state) => const ProfilePage(),
     ),
+
     GoRoute(
       path: Routes.profileEdit,
       builder: (context, state) => const ProfileEditPage(),
     ),
+
     GoRoute(
       path: Routes.privacyPolicy,
       builder: (context, state) => const PrivacyPolicyPage(),
     ),
+
     GoRoute(
       path: Routes.notificationSettings,
       builder: (context, state) => const NotificationSettingsPage(),
     ),
+
     GoRoute(
       path: Routes.helpCenter,
       builder: (context, state) => const HelpCenterPage(),
     ),
-       GoRoute(
+
+    GoRoute(
       path: Routes.language,
       builder: (context, state) => const LanguagePage(),
-    ),
-    
-    GoRoute(
-      path: Routes.verifyCode,
-      builder: (context, state) {
-        final phoneNumber = state.extra as String? ?? '';
-        return VerifyCodePage(phoneNumber: phoneNumber);
-      },
     ),
   ],
 );

@@ -50,7 +50,6 @@ class AuthRepository {
     required String code,
   }) async {
     try {
-    
 
       if (phoneNumber.isEmpty) {
         return Result.error(Exception('Telefon raqami bo\'sh bo\'lishi mumkin emas'));

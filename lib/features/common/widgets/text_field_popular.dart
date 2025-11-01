@@ -3,13 +3,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/utils/app_colors.dart';
 class TextFieldPopular extends StatelessWidget {
   final TextEditingController controller;
-  final String hintText;
+  final String? hintText;
   final TextInputType keyboardType;
 
   const TextFieldPopular({
     super.key,
     required this.controller,
-    required this.hintText,
+    this.hintText,
     this.keyboardType = TextInputType.text,
   });
 

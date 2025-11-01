@@ -3,10 +3,11 @@ import 'package:airtravel_app/features/common/managers/theme_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:airtravel_app/core/router/router.dart' as AppRouter;
+import 'package:airtravel_app/core/routing/router.dart' as AppRouter;
 import 'package:airtravel_app/core/utils/app_theme.dart';
 
-void main(List<String> args) {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -15,10 +16,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
-      designSize: const Size(428, 926),
-      child: MultiBlocProvider(
-        providers: AppDependencies.providers,
+    return MultiBlocProvider(
+      providers: AppDependencies.providers,
+      child: ScreenUtilInit(
+        designSize: const Size(428, 926),
         child: const AppView(),
       ),
     );
@@ -34,10 +35,10 @@ class AppView extends StatelessWidget {
       builder: (context, state) {
         return MaterialApp.router(
           debugShowCheckedModeBanner: false,
-          title: 'My Cooking App',
+          title: 'Air Travel App',
           theme: AppThemes.lightTheme,
           darkTheme: AppThemes.darkTheme,
-          themeMode: state.themeMode,
+          themeMode: state.themeMode, 
           routerConfig: AppRouter.router,
         );
       },

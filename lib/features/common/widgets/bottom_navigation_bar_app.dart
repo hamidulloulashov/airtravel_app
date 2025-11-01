@@ -1,4 +1,4 @@
-import 'package:airtravel_app/core/router/routes.dart';
+import 'package:airtravel_app/core/routing/routes.dart';
 import 'package:airtravel_app/core/utils/app_colors.dart';
 import 'package:airtravel_app/core/utils/app_icons.dart';
 import 'package:flutter/material.dart';

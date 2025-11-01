@@ -13,10 +13,10 @@ class HelpCenterModel {
 
   factory HelpCenterModel.fromJson(Map<String, dynamic> json) {
     return HelpCenterModel(
-      id: json['id'] as int,
-      title: json['title'] as String,
-      icon: json['icon'] as String,
-      link: json['link'] as String,
+      id: json['id'],
+      title: json['title'],
+      icon: json['icon'],
+      link: json['link'],
     );
   }
 }
@@ -34,7 +34,7 @@ class FaqModel {
 
   factory FaqModel.fromJson(Map<String, dynamic> json) {
     return FaqModel(
-      id: json['id'] as int,
+      id: json['id'],
       question: json['question'],
       answer: json['answer'],
     );
