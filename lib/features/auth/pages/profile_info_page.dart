@@ -1,21 +1,21 @@
 import 'dart:io';
 import 'package:airtravel_app/core/router/routes.dart';
-import 'package:airtravel_app/core/utils/app_colors.dart';
-import 'package:airtravel_app/core/utils/app_icons.dart';
 import 'package:airtravel_app/features/auth/managers/aut_state.dart';
 import 'package:airtravel_app/features/auth/managers/auth_bloc.dart';
 import 'package:airtravel_app/features/auth/managers/auth_event.dart';
+import 'package:airtravel_app/features/auth/widgets/custom_drop_down_widget.dart';
+import 'package:airtravel_app/features/auth/widgets/custom_text_feld_widget.dart';
+import 'package:airtravel_app/features/auth/widgets/profile_avatar_widget.dart';
+import 'package:airtravel_app/features/common/widgets/app_bar_widget.dart';
 import 'package:airtravel_app/features/common/widgets/text_button_popular.dart';
-import 'package:airtravel_app/features/common/widgets/text_field_popular.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfileInfoPage extends StatefulWidget {
-  final Map<String, dynamic> extra; 
+  final Map<String, dynamic> extra;
 
   const ProfileInfoPage({super.key, required this.extra});
 
@@ -31,22 +31,20 @@ class _ProfileInfoPageState extends State<ProfileInfoPage> {
 
   String get phoneNumber {
     try {
-      final value = widget.extra['phoneNumber'] ?? 
-                    widget.extra['phone_number'] ?? 
-                    '';
+      final value = widget.extra['phoneNumber'] ??
+          widget.extra['phone_number'] ??
+          '';
       return value is String ? value : '';
     } catch (e) {
-      print('❌ phoneNumber olishda xato: $e');
       return '';
     }
   }
-  
+
   bool get isNewUser {
     try {
       final value = widget.extra['isNewUser'] ?? true;
       return value is bool ? value : true;
     } catch (e) {
-      print('❌ isNewUser olishda xato: $e');
       return true;
     }
   }
@@ -66,14 +64,6 @@ class _ProfileInfoPageState extends State<ProfileInfoPage> {
     'Sirdaryo': 12,
     'Qoraqalpog\'iston': 13,
   };
-
-  @override
-  void initState() {
-    super.initState();
-    print('📱 ProfileInfoPage: extra = ${widget.extra}');
-    print('📱 ProfileInfoPage: Telefon raqam = $phoneNumber');
-    print('🔍 isNewUser = $isNewUser');
-  }
 
   Future<void> _rasmTanlash() async {
     final picker = ImagePicker();
@@ -96,18 +86,9 @@ class _ProfileInfoPageState extends State<ProfileInfoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        leadingWidth: 75,
-        leading: Center(
-          child: IconButton(
-            onPressed: () => context.pop(),
-            icon: SvgPicture.asset(AppIcons.arrowLeft),
-          ),
-        ),
-        title: Text(
-          "Ma'lumotlarni kiriting",
-          style: TextStyle(fontSize: 22.sp, fontWeight: FontWeight.w600),
-        ),
+      appBar: const AppBarWidget(
+        title: "Ma'lumotlarni kiriting",
+        showThemeToggle: true,
       ),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -115,7 +96,7 @@ class _ProfileInfoPageState extends State<ProfileInfoPage> {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Profil saqlandi!')),
             );
-            context.go(Routes.home); 
+            context.go(Routes.home);
           } else if (state is AuthError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -131,55 +112,30 @@ class _ProfileInfoPageState extends State<ProfileInfoPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             spacing: 24.h,
             children: [
-              Stack(
-                children: [
-                  CircleAvatar(
-                    radius: 60.r,
-                    backgroundImage: rasm != null ? FileImage(rasm!) : null,
-                    backgroundColor: Colors.grey.shade200,
-                    child: rasm == null
-                        ? Icon(Icons.person, size: 60.sp, color: Colors.grey)
-                        : null,
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 4,
-                    child: GestureDetector(
-                      onTap: _rasmTanlash,
-                      child: CircleAvatar(
-                        radius: 18.r,
-                        backgroundColor: Colors.green,
-                        child: Icon(Icons.edit, color: Colors.white, size: 18),
-                      ),
-                    ),
-                  ),
-                ],
+              ProfileAvatarWidget(
+                imageFile: rasm,
+                onTap: _rasmTanlash,
               ),
-              TextFieldPopular(
+              CustomTextFeldWidget(
                 controller: ismController,
                 hintText: "Ismingiz",
               ),
-              TextFieldPopular(
+              CustomTextFeldWidget(
                 controller: familiyaController,
                 hintText: "Familyangiz",
               ),
-              DropdownButtonFormField<String>(
+              CustomDropDownWidget(
                 value: tanlanganViloyat,
-                decoration: InputDecoration(
-                  hintText: "Viloyatingiz",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16.r),
-                    borderSide: BorderSide.none,
-                  ),
-                  filled: true,
-                  fillColor: AppColors.grenWhite,
-                ),
+                hintText: "Viloyatingiz",
                 items: viloyatlar.keys
-                    .map((v) => DropdownMenuItem(value: v, child: Text(v)))
+                    .map((v) => DropdownMenuItem(
+                          value: v,
+                          child: Text(v),
+                        ))
                     .toList(),
                 onChanged: (yangi) => setState(() => tanlanganViloyat = yangi),
               ),
-              Spacer(),
+              const Spacer(),
               BlocBuilder<AuthBloc, AuthState>(
                 builder: (context, state) {
                   final isLoading = state is AuthLoading;
@@ -201,7 +157,8 @@ class _ProfileInfoPageState extends State<ProfileInfoPage> {
                       if (phoneNumber.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text('Telefon raqam topilmadi. Qaytadan kiriting.'),
+                            content: Text(
+                                'Telefon raqam topilmadi. Qaytadan kiriting.'),
                             backgroundColor: Colors.orange,
                           ),
                         );
@@ -216,7 +173,7 @@ class _ProfileInfoPageState extends State<ProfileInfoPage> {
                               lastName: familiyaController.text.trim(),
                               region: regionId.toString(),
                               profileImage: rasm,
-                              phoneNumber: phoneNumber, 
+                              phoneNumber: phoneNumber,
                               isNewUser: isNewUser,
                             ),
                           );

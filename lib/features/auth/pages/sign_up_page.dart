@@ -1,15 +1,16 @@
-import 'package:airtravel_app/core/formatter.dart';
 import 'package:airtravel_app/core/router/routes.dart';
-import 'package:airtravel_app/core/utils/app_colors.dart';
-import 'package:airtravel_app/core/utils/app_icons.dart';
 import 'package:airtravel_app/features/auth/managers/aut_state.dart';
 import 'package:airtravel_app/features/auth/managers/auth_bloc.dart';
 import 'package:airtravel_app/features/auth/managers/auth_event.dart';
+import 'package:airtravel_app/features/auth/widgets/logo_widget.dart';
+import 'package:airtravel_app/features/auth/widgets/page_title_widget.dart';
+import 'package:airtravel_app/features/auth/widgets/phone_text_widget.dart';
+import 'package:airtravel_app/features/auth/widgets/phone_validatsiya_widget.dart';
+import 'package:airtravel_app/features/common/widgets/app_bar_widget.dart';
 import 'package:airtravel_app/features/common/widgets/text_button_popular.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -22,6 +23,7 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
   final _telefonController = TextEditingController();
+  bool _hasError = false;
 
   @override
   void dispose() {
@@ -30,14 +32,21 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   void _register(BuildContext context) {
-    if (!_formKey.currentState!.validate()) return;
+    setState(() {
+      _hasError = !(_formKey.currentState?.validate() ?? false);
+    });
+
+    if (_hasError) return;
 
     final rawPhone = _telefonController.text.trim();
-    final phone = rawPhone.replaceAll(RegExp(r'[^\d+]'), '');
+    final phone = PhoneValidatsiyaWidget.formatPhone(rawPhone);
 
-    if (phone.length < 9) {
+    if (!PhoneValidatsiyaWidget.isValidUzbekPhone(phone)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Telefon raqam to\'liq kiritilmadi')),
+        const SnackBar(
+          content: Text('Noto\'g\'ri telefon raqam'),
+          backgroundColor: Colors.red,
+        ),
       );
       return;
     }
@@ -48,21 +57,13 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leadingWidth: 75,
-        leading: Center(
-          child: IconButton(
-            onPressed: () => context.pop(),
-            icon: SvgPicture.asset(AppIcons.arrowLeft),
-          ),
-        ),
+      appBar: const AppBarWidget(
+        showThemeToggle: true,
+        leadingIcon: Icon(Icons.arrow_back),
       ),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
-          
           if (state is RegistrationSuccess) {
-         
-            
             if (state.isRegistered) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -71,7 +72,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   duration: Duration(seconds: 1),
                 ),
               );
-              
+
               Future.delayed(const Duration(milliseconds: 500), () {
                 context.go(Routes.home);
               });
@@ -82,7 +83,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   backgroundColor: Colors.blue,
                 ),
               );
-              
+
               context.push(Routes.verifyCode, extra: state.phoneNumber);
             }
           } else if (state is AuthError) {
@@ -102,56 +103,30 @@ class _SignUpPageState extends State<SignUpPage> {
               child: Column(
                 children: [
                   SizedBox(height: 30.h),
-                  Image.asset(
-                    "assets/logo.png",
-                    width: 100.w,
-                    height: 100.h,
-                    fit: BoxFit.cover,
-                    color: AppColors.grenWhite,
-                  ),
+                  const LogoWidget(),
                   SizedBox(height: 40.h),
-                  Text(
-                    "Ro'yxatdan o'tish",
-                    style: TextStyle(
-                      fontSize: 30.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  const PageTitleWidget(title: "Ro'yxatdan o'tish"),
                   SizedBox(height: 40.h),
-
-                  TextFormField(
+                  PhoneTextWidget(
                     controller: _telefonController,
-                    keyboardType: TextInputType.phone,
-                    inputFormatters: [phoneNumberFormatter],
-                    decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.phone),
-                      hintText: "Telefon raqamingizni kiriting",
-                      hintStyle: const TextStyle(
-                        color: Color.fromARGB(255, 70, 68, 68),
-                      ),
-                      labelText: "Telefon raqami",
-                      filled: true,
-                      fillColor: AppColors.grenWhite,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16.r),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Telefon raqami kiritilishi shart';
+                    hasError: _hasError,
+                    validator: PhoneValidatsiyaWidget.validate,
+                    onChanged: (value) {
+                      if (_hasError) {
+                        setState(() {
+                          _hasError = false;
+                        });
+                        _formKey.currentState?.validate();
                       }
-                      return null;
                     },
                   ),
                   SizedBox(height: 32.h),
-
                   BlocBuilder<AuthBloc, AuthState>(
                     builder: (context, state) {
                       final isLoading = state is AuthLoading;
                       return TextButtonPopular(
                         title: isLoading ? 'Yuklanmoqda...' : 'Davom etish',
-                        onPressed: () => _register(context),
+                        onPressed: isLoading ? () {} : () => _register(context),
                       );
                     },
                   ),

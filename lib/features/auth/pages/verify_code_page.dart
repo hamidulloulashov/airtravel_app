@@ -1,14 +1,13 @@
 import 'package:airtravel_app/core/router/routes.dart';
 import 'package:airtravel_app/core/utils/app_colors.dart';
-import 'package:airtravel_app/core/utils/app_icons.dart';
 import 'package:airtravel_app/features/auth/managers/aut_state.dart';
 import 'package:airtravel_app/features/auth/managers/auth_bloc.dart';
 import 'package:airtravel_app/features/auth/managers/auth_event.dart';
+import 'package:airtravel_app/features/common/widgets/app_bar_widget.dart';
 import 'package:airtravel_app/features/common/widgets/text_button_popular.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 class VerifyCodePage extends StatefulWidget {
@@ -81,32 +80,22 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
-      appBar: AppBar(
-        leadingWidth: 75,
-        leading: Center(
-          child: IconButton(
-            onPressed: () => context.pop(),
-            icon: SvgPicture.asset(AppIcons.arrowLeft),
-          ),
-        ),
-        title: Text(
-          "Kodni kiriting",
-          style: TextStyle(fontSize: 22.sp, fontWeight: FontWeight.w600),
-        ),
+      appBar: const AppBarWidget(
+        showThemeToggle: true,
+        leadingIcon: Icon(Icons.arrow_back),
+        title: "Kodni kiriting",
       ),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
-          
           if (state is VerificationSuccess) {
-          
-            
             final hasCompleteProfile = state.user != null && 
                                       state.user!.firstName != null && 
                                       state.user!.firstName!.isNotEmpty;
             
             if (state.isExistingUser && hasCompleteProfile) {
-              
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Xush kelibsiz!'),
@@ -115,7 +104,6 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
               );
               context.go(Routes.home);
             } else {
-           
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Iltimos, profilingizni to\'ldiring'),
@@ -149,7 +137,9 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
                 'SMS kodni kiriting',
                 style: TextStyle(
                   fontSize: 18.sp,
-                  color: const Color.fromARGB(255, 71, 69, 69),
+                  color: isDark 
+                      ? Colors.grey[300] 
+                      : const Color.fromARGB(255, 71, 69, 69),
                 ),
               ),
               SizedBox(height: 10.h),
@@ -161,7 +151,7 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
                   fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
                   color: widget.phoneNumber.isNotEmpty 
-                      ? Colors.black 
+                      ? (isDark ? Colors.white : Colors.black)
                       : Colors.red,
                 ),
               ),
@@ -181,6 +171,7 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
                         fontSize: 24.sp,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 2,
+                        color: isDark ? Colors.white : Colors.black,
                       ),
                       decoration: InputDecoration(
                         counterText: "",
@@ -189,7 +180,9 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
                           borderSide: BorderSide.none,
                         ),
                         filled: true,
-                        fillColor: AppColors.grenWhite,
+                        fillColor: isDark 
+                            ? Colors.grey[850] 
+                            : AppColors.grenWhite,
                       ),
                       onChanged: (value) {
                         if (value.isNotEmpty && index < 3) {
