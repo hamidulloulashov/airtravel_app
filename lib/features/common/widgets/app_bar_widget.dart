@@ -26,6 +26,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return AppBar(
+      automaticallyImplyLeading: false,
       leadingWidth: 75,
       leading: leadingIcon != null
           ? Center(child: leadingIcon)

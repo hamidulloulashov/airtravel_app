@@ -8,7 +8,6 @@ class UserRegistrationRequest {
       };
 }
 
-
 class UserRegistrationResponse {
   final bool? exist; 
   final String? message;
@@ -19,13 +18,9 @@ class UserRegistrationResponse {
   });
 
   factory UserRegistrationResponse.fromJson(Map<String, dynamic> json) {
-    final exist = json['exist'] as bool?;
-    final message = json['message'] as String?;
-    
-    
     return UserRegistrationResponse(
-      exist: exist,
-      message: message,
+      exist: json['exist'] as bool?,
+      message: json['message'] as String?,
     );
   }
 }
@@ -46,41 +41,32 @@ class VerificationRequest {
 }
 
 class VerificationResponse {
-  final String token;
-  final String refreshToken;
+  final String? token;         
+  final String? refreshToken;   
   final UserData? user;
   final bool? exist;
+  
   VerificationResponse({
-    required this.token,
-    this.refreshToken = '',
+    this.token,
+    this.refreshToken,
     this.user,
     this.exist,
   });
 
+  bool get hasToken => token != null && token!.isNotEmpty;
+
   factory VerificationResponse.fromJson(Map<String, dynamic> json) {
+ 
     
-    final token = json['access'] ?? json['token'] ?? '';
-    
-    if (token.isNotEmpty) {
-      final tokenPreview = token.length > 20 ? token.substring(0, 20) : token;
-    } else {
-    }
-    
-    final refreshToken = json['refresh'] ?? '';
-    if (refreshToken.isNotEmpty) {
-    }
-    
+    final token = json['access'] ?? json['token'];
+    final refreshToken = json['refresh'];
     final exist = json['exist'] as bool?;
+    
     
     final userData = json['user'] != null 
         ? UserData.fromJson(json['user'] as Map<String, dynamic>)
         : null;
-        
-    if (userData == null) {
-    } else {
-    }
   
-    
     return VerificationResponse(
       token: token,
       refreshToken: refreshToken,

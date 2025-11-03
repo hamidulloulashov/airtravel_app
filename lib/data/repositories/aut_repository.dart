@@ -14,7 +14,6 @@ class AuthRepository {
     required String phoneNumber,
   }) async {
     try {
-
       if (phoneNumber.isEmpty) {
         return Result.error(Exception('Telefon raqami kiritilmagan'));
       }
@@ -34,7 +33,6 @@ class AuthRepository {
           return Result.error(error);
         },
         (data) {
-       
           return Result.ok(UserRegistrationResponse.fromJson(data));
         },
       );
@@ -50,9 +48,9 @@ class AuthRepository {
     required String code,
   }) async {
     try {
-
+      
       if (phoneNumber.isEmpty) {
-        return Result.error(Exception('Telefon raqami bo\'sh bo\'lishi mumkin emas'));
+        return Result.error(Exception('Telefon raqami bo\'sh'));
       }
       if (code.isEmpty) {
         return Result.error(Exception('Kod kiritilmagan'));
@@ -63,7 +61,6 @@ class AuthRepository {
         code: code,
       );
 
-
       final result = await _apiClient.post<Map<String, dynamic>>(
         '/accounts/user/token/',
         data: request.toJson(),
@@ -72,37 +69,28 @@ class AuthRepository {
         ),
       );
 
-
       return result.fold(
         (error) {
           return Result.error(error);
         },
         (data) async {
-         
           
-          final token = data['access'] ?? data['token'];
+          final response = VerificationResponse.fromJson(data);
           
-          final exist = data['exist'] ?? false;
-          
-          if (data['user'] != null) {
+          if (response.hasToken) {
+            await TokenStorage.saveToken(response.token!);
+            
+            if (response.refreshToken != null && response.refreshToken!.isNotEmpty) {
+              await TokenStorage.saveRefreshToken(response.refreshToken!);
+            }
             
           } else {
-          }
-
-          final response = VerificationResponse.fromJson(data);
-     
-
-          await TokenStorage.saveToken(response.token);
-          
-          if (response.refreshToken.isNotEmpty) {
-            await TokenStorage.saveRefreshToken(response.refreshToken);
           }
 
           return Result.ok(response);
         },
       );
     } catch (e) {
-     
       return Result.error(
         Exception("Kodni tasdiqlashda xatolik: ${e.toString()}"),
       );
@@ -117,6 +105,7 @@ class AuthRepository {
     String? phoneNumber,
   }) async {
     try {
+      print('👤 Profil yangilanmoqda...');
 
       final formData = FormData();
 
@@ -147,7 +136,6 @@ class AuthRepository {
         );
       }
 
-
       final result = await _apiClient.post<Map<String, dynamic>>(
         '/accounts/user/register/',
         data: formData,
@@ -161,8 +149,32 @@ class AuthRepository {
         (error) {
           return Result.error(error);
         },
-        (data) {
-          return Result.ok(UserData.fromJson(data));
+        (data) async {
+          
+          final token = data['access'] ?? data['token'];
+          final refreshToken = data['refresh'];
+          
+  
+          if (token != null && token.toString().isNotEmpty) {
+            await TokenStorage.saveToken(token.toString());
+            
+            if (refreshToken != null && refreshToken.toString().isNotEmpty) {
+              await TokenStorage.saveRefreshToken(refreshToken.toString());
+            }
+            
+            final savedToken = await TokenStorage.getToken();
+          } else {
+          }
+          
+       
+          final userData = UserData(
+            phoneNumber: phoneNumber,
+            firstName: firstName,
+            lastName: lastName,
+            region: region != null ? int.tryParse(region) : null,
+          );
+          
+          return Result.ok(userData);
         },
       );
     } catch (e) {

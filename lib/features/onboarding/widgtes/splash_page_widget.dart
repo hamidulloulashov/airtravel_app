@@ -1,17 +1,50 @@
+import 'package:airtravel_app/core/routing/routes.dart';
+import 'package:airtravel_app/core/token_storage.dart';
 import 'package:airtravel_app/core/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
-class SplashPageWidget extends StatelessWidget {
+class SplashPageWidget extends StatefulWidget {
   const SplashPageWidget({Key? key}) : super(key: key);
+
+  @override
+  State<SplashPageWidget> createState() => _SplashPageWidgetState();
+}
+
+class _SplashPageWidgetState extends State<SplashPageWidget> {
+  @override
+  void initState() {
+    super.initState();
+    _checkAuthAndNavigate();
+  }
+
+  Future<void> _checkAuthAndNavigate() async {
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (!mounted) return;
+
+   
+    final hasToken = await TokenStorage.hasToken();
+    final token = await TokenStorage.getToken();
+
+    print('   - Token bor: $hasToken');
+
+
+    if (hasToken && token != null && token.isNotEmpty) {
+      context.go(Routes.home);
+    } else {
+    
+      context.go(Routes.signUp);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF2C2C2C),
+      backgroundColor: const Color(0xFF2C2C2C),
       body: Container(
-      
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/chiroq.jpg'),
             fit: BoxFit.cover,
@@ -33,7 +66,7 @@ class SplashPageWidget extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Spacer(),
+                const Spacer(),
                 Text(
                   'Welcome to 👋',
                   style: TextStyle(
@@ -52,9 +85,9 @@ class SplashPageWidget extends StatelessWidget {
                     height: 1.3.h,
                   ),
                 ),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 Text(
-                  'The best furniture e-commerce app of the century for your daily needs!',
+                  'The best travel app for your unforgettable journeys!',
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -62,7 +95,13 @@ class SplashPageWidget extends StatelessWidget {
                     height: 1.5.h,
                   ),
                 ),
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
+                Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.white),
+                  ),
+                ),
+                const SizedBox(height: 40),
               ],
             ),
           ),

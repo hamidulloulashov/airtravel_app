@@ -22,6 +22,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     emit(const AuthLoading());
+    
     final result = await _repository.registerUser(phoneNumber: event.phoneNumber);
 
     result.fold(
@@ -30,6 +31,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       },
       (response) {
         final isRegistered = response.exist ?? false;
+        
         
         emit(
           RegistrationSuccess(
@@ -48,6 +50,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(const AuthLoading());
     
+    
     final result = await _repository.verifyCode(
       phoneNumber: event.phoneNumber,
       code: event.code,
@@ -58,19 +61,37 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthError(error.toString()));
       },
       (response) {
-        final isExistingUser = response.exist == true;
-        final hasUserData = response.user != null && 
-                           response.user!.firstName != null && 
-                           response.user!.firstName!.isNotEmpty;
         
-       
-        emit(
-          VerificationSuccess(
-            token: response.token,
-            user: response.user,
-            isExistingUser: isExistingUser,
-          ),
-        );
+        final isExistingUser = response.exist == true;
+        
+        final hasToken = response.token != null && response.token!.isNotEmpty;
+        
+        if (hasToken) {
+   
+          
+          final hasUserData = response.user != null && 
+                             response.user!.firstName != null && 
+                             response.user!.firstName!.isNotEmpty;
+          
+          
+          emit(
+            VerificationSuccess(
+              token: response.token!,
+              user: response.user,
+              isExistingUser: isExistingUser,
+            ),
+          );
+        } else {
+      
+          
+          emit(
+            VerificationSuccess(
+              token: '', 
+              user: response.user,
+              isExistingUser: false, 
+            ),
+          );
+        }
       },
     );
   }
@@ -79,8 +100,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     UpdateProfileEvent event,
     Emitter<AuthState> emit,
   ) async {
-    
     emit(const AuthLoading());
+    
+   
+    
     final result = await _repository.updateProfile(
       firstName: event.firstName,
       lastName: event.lastName,
@@ -104,6 +127,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     emit(const AuthLoading());
+    
+    
     final result = await _repository.getProfile();
 
     result.fold(
@@ -120,7 +145,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     LogoutEvent event,
     Emitter<AuthState> emit,
   ) async {
+    
     await _repository.logout();
+    
     emit(const Unauthenticated());
   }
 
@@ -137,7 +164,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     
     emit(const AuthLoading());
+    
     final hasToken = await TokenStorage.hasToken();
+    final token = await TokenStorage.getToken();
+    
+
 
     if (hasToken) {
       add(const GetProfileEvent());
