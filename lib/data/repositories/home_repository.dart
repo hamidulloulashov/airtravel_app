@@ -39,7 +39,7 @@ class HomeRepository {
       if (offset != null) queryParams['offset'] = offset;
 
       final result = await _client.get<dynamic>(
-        '/packages/package/list/',
+        '/places/popular_place/list/',
         queryParams: queryParams,
       );
 
