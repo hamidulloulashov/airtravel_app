@@ -2,6 +2,8 @@ import 'package:airtravel_app/core/routing/routes.dart';
 import 'package:airtravel_app/features/accaunt/pages/help_center_page.dart';
 import 'package:airtravel_app/features/accaunt/pages/language_page.dart';
 import 'package:airtravel_app/features/accaunt/pages/notification_settings_page.dart';
+import 'package:airtravel_app/features/accaunt/pages/order_history_page.dart';
+import 'package:airtravel_app/features/accaunt/pages/payment_history_page.dart';
 import 'package:airtravel_app/features/accaunt/pages/privacy_policy_page.dart';
 import 'package:airtravel_app/features/accaunt/pages/profile_edit_page.dart';
 import 'package:airtravel_app/features/accaunt/pages/profile_page.dart';
@@ -14,33 +16,28 @@ import '../../features/auth/pages/sign_up_page.dart';
 import '../../features/auth/pages/verify_code_page.dart';
 
 final GoRouter router = GoRouter(
-  initialLocation: Routes.home,
+  initialLocation: Routes.splash,
   routes: [
     GoRoute(
       path: Routes.splash,
       builder: (context, state) => const SplashPage(),
     ),
-
     GoRoute(
       path: Routes.login,
       builder: (context, state) => const SplashPage(),
     ),
-
     GoRoute(
       path: Routes.home,
       builder: (context, state) => const HomePage(),
     ),
-
     GoRoute(
       path: Routes.onboarding,
       builder: (context, state) => const OnboardingPage(),
     ),
-
     GoRoute(
       path: Routes.signUp,
       builder: (context, state) => const SignUpPage(),
     ),
-
     GoRoute(
       path: Routes.verifyCode,
       builder: (context, state) {
@@ -48,7 +45,6 @@ final GoRouter router = GoRouter(
         return VerifyCodePage(phoneNumber: phoneNumber);
       },
     ),
-
     GoRoute(
       path: Routes.profileInfo,
       builder: (context, state) {
@@ -72,35 +68,37 @@ final GoRouter router = GoRouter(
         return ProfileInfoPage(extra: params);
       },
     ),
-
     GoRoute(
       path: Routes.profile,
-      builder: (context, state) => const ProfilePage(),
+      builder: (context, state) => ProfilePage(),
     ),
-
     GoRoute(
       path: Routes.profileEdit,
-      builder: (context, state) => const ProfileEditPage(),
+      builder: (context, state) => ProfileEditPage(),
     ),
-
     GoRoute(
       path: Routes.privacyPolicy,
-      builder: (context, state) => const PrivacyPolicyPage(),
+      builder: (context, state) => PrivacyPolicyPage(),
     ),
-
     GoRoute(
       path: Routes.notificationSettings,
-      builder: (context, state) => const NotificationSettingsPage(),
+      builder: (context, state) => NotificationSettingsPage(),
     ),
-
     GoRoute(
       path: Routes.helpCenter,
-      builder: (context, state) => const HelpCenterPage(),
+      builder: (context, state) => HelpCenterPage(),
     ),
-
     GoRoute(
       path: Routes.language,
-      builder: (context, state) => const LanguagePage(),
+      builder: (context, state) => LanguagePage(),
     ),
+    GoRoute(
+      path: Routes.order,
+      builder: (context, state) => OrderHistoryPage(),
+    ),
+    GoRoute(
+      path: Routes.payment,
+      builder: (context, state) => PaymentHistoryPage(),
+    )
   ],
 );

@@ -18,5 +18,5 @@ class AppColors {
   static const cardGrey = Color(0xFFD9D9D9);
   static const grey = Color(0xFF4B4B4B);
   static const borderGrey = Color(0xFF04060F2B);
-
+  // static const textGrey = Color(0xFFC4C4C4);
 }

@@ -19,12 +19,23 @@ class UserModel {
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      firstName: json['first_name'],
-      lastName: json['last_name'],
-      region: json['region'],
-      phoneNumber: json['phone_number'],
-      isVerified: json['is_verified'],
+      firstName: json['first_name'] ?? '',
+      lastName: json['last_name'] ?? '',
+      region: json['region'] is int
+          ? RegionModel(id: json['region'], title: '')
+          : RegionModel.fromJson(json['region']),
+      phoneNumber: json['phone_number'] ?? '',
+      isVerified: json['is_verified'] ?? false,
       balance: (json['balance'] ?? 0).toDouble(),
     );
   }
+  Map<String, dynamic> toJsonForPatch() {
+    return {
+      'first_name': firstName,
+      'last_name': lastName,
+      'phone_number': phoneNumber,
+      'region': region.id,
+    };
+  }
+
 }

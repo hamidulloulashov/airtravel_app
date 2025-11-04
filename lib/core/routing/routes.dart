@@ -12,4 +12,7 @@ class Routes {
   static const notificationSettings = '/notificationSettings';
   static const helpCenter = '/helpCenter';
   static const language = '/language';
+  static const order = '/order';
+  static const payment = '/payment';
+
 }

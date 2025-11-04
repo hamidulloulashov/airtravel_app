@@ -104,13 +104,17 @@ class _ProfilePageState extends State<ProfilePage> {
                       iconBack: AppIcons.arrowRightGreen,
                     ),
                     ProfileItemWidget(
-                      onTap: () {},
+                      onTap: () {
+                        context.push(Routes.payment);
+                      },
                       text: 'To’lovlar',
                       icon: AppIcons.wallet,
                       iconBack: AppIcons.arrowRightGreen,
                     ),
                     ProfileItemWidget(
-                      onTap: () {},
+                      onTap: () {
+                        context.push(Routes.order);
+                      },
                       text: 'Buyurtma tarixi',
                       icon: AppIcons.shieldDone,
                       iconBack: AppIcons.arrowRightGreen,

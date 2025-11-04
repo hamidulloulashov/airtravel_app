@@ -6,8 +6,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:airtravel_app/core/routing/router.dart' as AppRouter;
 import 'package:airtravel_app/core/utils/app_theme.dart';
 
+import 'core/client.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await ApiClient.initLanguage();
   runApp(const MyApp());
 }
 

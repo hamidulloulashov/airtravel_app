@@ -2,6 +2,7 @@ import 'package:airtravel_app/core/client.dart';
 import 'package:airtravel_app/data/model/home_model.dart';
 import 'package:airtravel_app/data/repositories/home_repository.dart';
 import 'package:airtravel_app/features/common/widgets/app_bar_widget.dart';
+import 'package:airtravel_app/features/common/widgets/bottom_navigation_bar_app.dart';
 import 'package:airtravel_app/features/home/managers/home_bloc.dart';
 import 'package:airtravel_app/features/home/managers/home_event.dart';
 import 'package:airtravel_app/features/home/managers/home_state.dart';
@@ -99,6 +100,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBarWidget(),
+      bottomNavigationBar: BottomNavigationBarApp(),
       body: Column(
         children: [
           SearchBarWidget(
