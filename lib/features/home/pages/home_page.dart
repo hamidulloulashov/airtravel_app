@@ -13,7 +13,6 @@ import 'package:airtravel_app/features/home/widgets/popular_places_carusel.dart'
 import 'package:airtravel_app/features/home/widgets/search_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -67,7 +66,6 @@ class _HomePageState extends State<HomePage> {
             _minutes = 59;
             _seconds = 59;
           } else {
-            // Timer tugadi
             _timer?.cancel();
           }
         });
@@ -261,21 +259,146 @@ class _HomePageState extends State<HomePage> {
                   
                   BlocBuilder<HomeBloc, HomeState>(
                     builder: (context, state) {
+                      print('🎨 Current state: ${state.runtimeType}');
+                      
                       if (state is PackageLoading) {
                         return const SliverFillRemaining(
-                          child: Center(child: CircularProgressIndicator()),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4CAF50)),
+                            ),
+                          ),
+                        );
+                      }
+                      
+                      if (state is PackageSearching) {
+                        return SliverFillRemaining(
+                          hasScrollBody: false,
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4CAF50)),
+                                ),
+                                const SizedBox(height: 16),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                                  child: Text(
+                                    'Qidirilmoqda: "${state.query}"',
+                                    style: TextStyle(
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                                      fontSize: 16,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                      
+                      if (state is PackageSearchResults) {
+                        print('📊 Showing ${state.packages.length} search results');
+                        
+                        if (state.packages.isEmpty) {
+                          return SliverFillRemaining(
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    'Hech narsa topilmadi',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.grey[700],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Boshqa qidiruv so\'zini kiriting',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey[500],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+                        
+                        return SliverToBoxAdapter(
+                          child: _buildPackageSection(
+                            packages: state.packages,
+                            showResultCount: true,
+                            resultCount: state.resultCount,
+                          ),
                         );
                       }
                       
                       if (state is PackageError) {
                         return SliverFillRemaining(
-                          child: _buildErrorWidget(state.message),
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                                const SizedBox(height: 16),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                                  child: Text(
+                                    state.message,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(fontSize: 16),
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    context.read<HomeBloc>().add(
+                                      const LoadPackages(isRefresh: true),
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF4CAF50),
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  child: const Text('Qayta urinish'),
+                                ),
+                              ],
+                            ),
+                          ),
                         );
                       }
                       
                       if (state is PackageEmpty) {
                         return SliverFillRemaining(
-                          child: _buildEmptyWidget(),
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.inbox_outlined, size: 64, color: Colors.grey[400]),
+                                const SizedBox(height: 16),
+                                Text(
+                                  state.message ?? 'Paketlar topilmadi',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.grey[700],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         );
                       }
                       
@@ -284,41 +407,41 @@ class _HomePageState extends State<HomePage> {
                             ? state.packages
                             : (state as PackageLoadingMore).packages;
                         
-                        return SliverPadding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          sliver: SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                              (context, index) {
-                                if (index == packages.length &&
-                                    state is PackageLoadingMore) {
-                                  return const Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.all(16.0),
-                                      child: CircularProgressIndicator(),
+                        
+                        if (packages.isEmpty) {
+                          return SliverFillRemaining(
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.inventory_2_outlined, size: 64, color: Colors.grey[400]),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    'Paketlar yo\'q',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.grey[700],
                                     ),
-                                  );
-                                }
-                                
-                                if (index >= packages.length) return null;
-                                
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 16),
-                                  child: PackageCardWidget(
-                                    package: packages[index],
-                                    index: index,
                                   ),
-                                );
-                              },
-                              childCount: state is PackageLoadingMore
-                                  ? packages.length + 1
-                                  : packages.length,
+                                ],
+                              ),
                             ),
+                          );
+                        }
+                        
+                        return SliverToBoxAdapter(
+                          child: _buildPackageSection(
+                            packages: packages,
+                            isLoadingMore: state is PackageLoadingMore,
                           ),
                         );
                       }
                       
                       return const SliverFillRemaining(
-                        child: Center(child: Text('Kutilmoqda...')),
+                        child: Center(
+                          child: Text('Yuklanmoqda...'),
+                        ),
                       );
                     },
                   ),
@@ -335,68 +458,200 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildTimerSection() {
+  Widget _buildPackageSection({
+    required List<Package> packages,
+    bool isLoadingMore = false,
+    bool showResultCount = false,
+    int? resultCount,
+  }) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final cardWidth = 320.0;
+    final totalCardsWidth = packages.length * (cardWidth + 16);
+    final centerPadding = (screenWidth - cardWidth) / 2;
+    
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFFFFF176), Color(0xFFFFEB3B)],
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
+          colors: [
+            const Color(0xFFB2FF59).withOpacity(0.2),
+            const Color(0xFFFFEB3B).withOpacity(0.3),
+          ],
         ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.orange.withOpacity(0.3),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+      ),
+      child: Stack(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (showResultCount && resultCount != null)
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF4CAF50).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: const Color(0xFF4CAF50),
+                        width: 1.5,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.search,
+                          color: Color(0xFF4CAF50),
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            '$resultCount ta natija topildi',
+                            style: const TextStyle(
+                              color: Color(0xFF4CAF50),
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              
+              const SizedBox(height: 16),
+              
+              SizedBox(
+                height: 520,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: EdgeInsets.only(
+                    left: totalCardsWidth < screenWidth ? centerPadding : 16,
+                    right: totalCardsWidth < screenWidth ? centerPadding : 16,
+                  ),
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: packages.length + (isLoadingMore ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index == packages.length && isLoadingMore) {
+                      return Center(
+                        child: Container(
+                          width: 60,
+                          margin: const EdgeInsets.only(right: 16),
+                          child: const CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4CAF50)),
+                          ),
+                        ),
+                      );
+                    }
+                    
+                    return PackageCardWidget(
+                      package: packages[index],
+                      index: index,
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+          
+          Positioned(
+            top: showResultCount && resultCount != null ? 24 : 24,
+            right: 24,
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFEB3B).withOpacity(0.3),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.access_time,
+                color: Color(0xFFFF6F00),
+                size: 32,
+              ),
+            ),
           ),
         ],
       ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.3),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.access_time_filled,
-              color: Colors.orange,
-              size: 32,
-            ),
+    );
+  }
+
+  Widget _buildTimerSection() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color(0xFFB2FF59).withOpacity(0.2),
+            const Color(0xFFFFEB3B).withOpacity(0.3),
+          ],
+        ),
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFFFFF176), Color(0xFFFFEB3B)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          
-          const SizedBox(width: 16),
-          
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Shoshiling',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Chegirma tugashiga:',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.black.withOpacity(0.6),
-                  ),
-                ),
-              ],
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.orange.withOpacity(0.3),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
             ),
-          ),
-          
-          _buildTimeDisplay(),
-        ],
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.3),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.access_time_filled,
+                color: Colors.orange,
+                size: 32,
+              ),
+            ),
+            
+            const SizedBox(width: 16),
+            
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Shoshiling',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Chegirma tugashiga:',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.black.withOpacity(0.6),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            
+            _buildTimeDisplay(),
+          ],
+        ),
       ),
     );
   }
@@ -450,77 +705,6 @@ class _HomePageState extends State<HomePage> {
           color: Colors.white,
           height: 1,
         ),
-      ),
-    );
-  }
-
-  Widget _buildErrorWidget(String message) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.error_outline, size: 64, color: Colors.red),
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32),
-            child: Text(
-              message,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Theme.of(context).textTheme.bodyLarge?.color,
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () {
-              context.read<HomeBloc>().add(
-                const LoadPackages(isRefresh: true),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF4CAF50),
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: const Text('Qayta urinish'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEmptyWidget() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.inventory_2_outlined,
-            size: 64,
-            color: Colors.grey[400],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Paketlar topilmadi',
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Keyinroq qayta urinib ko\'ring',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[500],
-            ),
-          ),
-        ],
       ),
     );
   }

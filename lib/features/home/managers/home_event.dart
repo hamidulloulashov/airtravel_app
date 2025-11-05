@@ -32,7 +32,7 @@ class LoadMorePackages extends HomeEvent {
   List<Object?> get props => [limit];
 }
 
-// Search packages event
+
 class SearchPackages extends HomeEvent {
   final String query;
 
@@ -40,19 +40,25 @@ class SearchPackages extends HomeEvent {
 
   @override
   List<Object?> get props => [query];
+  
+  @override
+  String toString() => 'SearchPackages(query: $query)';
 }
 
-// Clear search event
 class ClearSearch extends HomeEvent {
   const ClearSearch();
+  
+  @override
+  List<Object?> get props => [];
+  
+  @override
+  String toString() => 'ClearSearch()';
 }
 
-// Refresh packages event
 class RefreshPackages extends HomeEvent {
   const RefreshPackages();
 }
 
-// Toggle favorite event
 class ToggleFavorite extends HomeEvent {
   final int packageId;
 
@@ -62,7 +68,6 @@ class ToggleFavorite extends HomeEvent {
   List<Object?> get props => [packageId];
 }
 
-// Filter packages event
 class FilterPackages extends HomeEvent {
   final String? destination;
   final int? minPrice;
@@ -88,7 +93,6 @@ class FilterPackages extends HomeEvent {
       ];
 }
 
-// Sort packages event
 class SortPackages extends HomeEvent {
   final PackageSortType sortType;
 
@@ -98,7 +102,6 @@ class SortPackages extends HomeEvent {
   List<Object?> get props => [sortType];
 }
 
-// Sort types
 enum PackageSortType {
   priceAsc,
   priceDesc,

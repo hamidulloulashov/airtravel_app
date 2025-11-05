@@ -1,4 +1,3 @@
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:airtravel_app/data/model/home_model.dart';
 import 'package:airtravel_app/data/repositories/home_repository.dart';
@@ -23,7 +22,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<FilterPackages>(_onFilterPackages);
     on<SortPackages>(_onSortPackages);
   }
-
 
   Future<void> _onLoadPackages(
     LoadPackages event,
@@ -69,9 +67,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           }
         },
       );
-    } catch (e, stackTrace) {
-
-      
+    } catch (e) {
       emit(PackageError(
         message: 'Xatolik yuz berdi: ${e.toString()}',
         cachedPackages: _allPackages.isNotEmpty ? _allPackages : null,
@@ -79,22 +75,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-
   Future<void> _onLoadMorePackages(
     LoadMorePackages event,
     Emitter<HomeState> emit,
   ) async {
-    if (!_hasMore) {
-      return;
-    }
-
-    if (state is PackageLoadingMore) {
-      return;
-    }
+    if (!_hasMore || state is PackageLoadingMore) return;
 
     try {
       final currentPage = (_currentOffset ~/ _pageSize) + 1;
-      
 
       emit(PackageLoadingMore(
         packages: _allPackages,
@@ -108,7 +96,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
       result.fold(
         (error) {
-          
           emit(PackageLoaded(
             packages: _allPackages,
             hasMore: _hasMore,
@@ -116,7 +103,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           ));
         },
         (response) {
-          
           final newPackages = response.results.where((newPkg) {
             return !_allPackages.any((existingPkg) => existingPkg.id == newPkg.id);
           }).toList();
@@ -125,7 +111,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           _currentOffset += event.limit;
           _hasMore = response.hasMore;
 
-
           emit(PackageLoaded(
             packages: _allPackages,
             hasMore: _hasMore,
@@ -133,9 +118,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           ));
         },
       );
-    } catch (e, stackTrace) {
- 
-      
+    } catch (e) {
       final currentPage = (_currentOffset ~/ _pageSize);
       emit(PackageLoaded(
         packages: _allPackages,
@@ -145,33 +128,35 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-
   Future<void> _onSearchPackages(
     SearchPackages event,
     Emitter<HomeState> emit,
   ) async {
     final query = event.query.trim();
     
+
     if (query.isEmpty) {
       emit(PackageLoaded(
         packages: _allPackages,
         hasMore: _hasMore,
+        currentPage: (_currentOffset ~/ _pageSize),
       ));
       return;
     }
 
-    
     emit(PackageSearching(query: query));
 
     await Future.delayed(const Duration(milliseconds: 300));
 
     final searchQuery = query.toLowerCase();
     final searchResults = _allPackages.where((package) {
-      return package.title.toLowerCase().contains(searchQuery) ||
-          package.destinationCities.toLowerCase().contains(searchQuery) ||
-          package.destinations.any((dest) => 
-            dest.ccity.toLowerCase().contains(searchQuery)
-          );
+      final titleMatch = package.title.toLowerCase().contains(searchQuery);
+      final cityMatch = package.destinationCities.toLowerCase().contains(searchQuery);
+      final destMatch = package.destinations.any((dest) => 
+        dest.ccity.toLowerCase().contains(searchQuery)
+      );
+      
+      return titleMatch || cityMatch || destMatch;
     }).toList();
 
 
@@ -191,7 +176,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     ClearSearch event,
     Emitter<HomeState> emit,
   ) {
-    print('🧹 Clearing search');
     
     emit(PackageLoaded(
       packages: _allPackages,
@@ -200,7 +184,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     ));
   }
 
-
   Future<void> _onRefreshPackages(
     RefreshPackages event,
     Emitter<HomeState> emit,
@@ -208,12 +191,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     add(const LoadPackages(isRefresh: true));
   }
 
-
   void _onToggleFavorite(
     ToggleFavorite event,
     Emitter<HomeState> emit,
   ) {
-    
     final updatedPackages = _allPackages.map((package) {
       if (package.id == event.packageId) {
         return package.copyWith(isLiked: !package.isLiked);
@@ -242,13 +223,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-
   void _onFilterPackages(
     FilterPackages event,
     Emitter<HomeState> emit,
   ) {
-
-    
     var filteredPackages = List<HomeModel>.from(_allPackages);
 
     if (event.destination != null && event.destination!.isNotEmpty) {
@@ -269,7 +247,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       );
     }
 
-
     if (filteredPackages.isEmpty) {
       emit(const PackageEmpty(
         message: 'Filter bo\'yicha natija topilmadi',
@@ -277,7 +254,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else {
       emit(PackageLoaded(
         packages: filteredPackages,
-        hasMore: false, 
+        hasMore: false,
         currentPage: 1,
       ));
     }
@@ -287,7 +264,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     SortPackages event,
     Emitter<HomeState> emit,
   ) {
-    
     final currentState = state;
     List<HomeModel> packagesToSort;
 
@@ -317,19 +293,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         break;
 
       case PackageSortType.newest:
-        // Sort by ID (assuming higher ID = newer)
         packagesToSort.sort((a, b) => b.id.compareTo(a.id));
         break;
 
       case PackageSortType.popular:
-        // Sort by discount percentage
         packagesToSort = packagesToSort.sortByDiscount();
         break;
     }
 
-    print('✅ Sorted ${packagesToSort.length} packages');
 
-    // Emit new state with sorted packages
     if (currentState is PackageLoaded) {
       emit(currentState.copyWith(packages: packagesToSort));
     } else if (currentState is PackageSearchResults) {
@@ -340,29 +312,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  // ============================================
-  // HELPER METHODS
-  // ============================================
-
-  /// Get favorite packages
   List<HomeModel> get favoritePackages {
     return _allPackages.where((pkg) => pkg.isLiked).toList();
   }
 
-  /// Get packages with discounts
   List<HomeModel> get discountedPackages {
     return _allPackages.filterByDiscount();
   }
 
-  /// Get total number of loaded packages
   int get totalLoadedPackages => _allPackages.length;
 
-  /// Check if has cached data
   bool get hasCachedData => _allPackages.isNotEmpty;
 
-  /// Clear cache
   void clearCache() {
-    print('🧹 Clearing cache');
     _allPackages.clear();
     _currentOffset = 0;
     _hasMore = true;
@@ -370,7 +332,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   @override
   Future<void> close() {
-    print('👋 HomeBloc closing');
     clearCache();
     return super.close();
   }

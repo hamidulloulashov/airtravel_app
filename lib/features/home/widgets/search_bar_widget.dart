@@ -24,51 +24,112 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
     
     return Container(
       color: Theme.of(context).appBarTheme.backgroundColor,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         children: [
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 20,bottom: 10),
+            child: Container(
+              height: 48,
+              decoration: BoxDecoration(
+                color: isDark ? Colors.grey[800] : Colors.grey[100],
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: TextField(
-                cursorColor:  Theme.of(context).textTheme.bodyLarge?.color,
+                cursorColor: Theme.of(context).textTheme.bodyLarge?.color,
                 controller: widget.controller,
                 style: TextStyle(
                   color: Theme.of(context).textTheme.bodyLarge?.color,
+                  fontSize: 16,
                 ),
                 decoration: InputDecoration(
-                  hintText: 'Search',
+                  hintText: 'Abcdefghijk',
                   hintStyle: TextStyle(
-                    color: Theme.of(context).textTheme.bodyLarge?.color?.withOpacity(0.5),
+                    color: Theme.of(context)
+                        .textTheme
+                        .bodyLarge
+                        ?.color
+                        ?.withOpacity(0.4),
+                    fontSize: 16,
                   ),
                   prefixIcon: Padding(
-                    padding: const EdgeInsets.all(11.0),
+                    padding: const EdgeInsets.all(12.0),
                     child: SvgPicture.asset(
-                          "assets/icons/search.svg"),
+                      "assets/icons/search.svg",
+                      width: 20,
+                      height: 20,
+                      colorFilter: ColorFilter.mode(
+                        Theme.of(context)
+                            .textTheme
+                            .bodyLarge
+                            ?.color
+                            ?.withOpacity(0.6) ?? Colors.grey,
+                        BlendMode.srcIn,
+                      ),
+                    ),
                   ),
-                  suffixIcon:Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: SvgPicture.asset("assets/icons/filter.svg",),
+                  suffixIcon: widget.controller.text.isNotEmpty
+                      ? IconButton(
+                          icon: Icon(
+                            Icons.clear,
+                            color: Theme.of(context)
+                                .textTheme
+                                .bodyLarge
+                                ?.color
+                                ?.withOpacity(0.6),
+                          ),
+                          onPressed: () {
+                            widget.controller.clear();
+                            widget.onClear();
+                            setState(() {});
+                          },
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: SvgPicture.asset(
+                            "assets/icons/filter.svg",
+                            width: 20,
+                            height: 20,
+                            colorFilter: ColorFilter.mode(
+                              Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.color
+                                  ?.withOpacity(0.6) ?? Colors.grey,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                        ),
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
                   ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  filled: true,
-                  fillColor: isDark 
-                      ? Colors.grey[800] 
-                      : Colors.grey[100],
                 ),
                 onChanged: (value) {
                   setState(() {});
+                  widget.onSearch(value);
                 },
                 onSubmitted: widget.onSearch,
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Image.asset("assets/notifaction.png", width: 24,),
-          )
+          const SizedBox(width: 12),
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: isDark ? Colors.grey[800] : Colors.grey[100],
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Center(
+              child: Image.asset(
+                "assets/notifaction.png",
+                width: 24,
+                height: 24,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
+              ),
+            ),
+          ),
         ],
       ),
     );

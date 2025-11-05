@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 
 class AppInterceptor extends Interceptor {
   @override
-  Future<void> onRequest(  // ✅ Future<void> qo'shing
+  Future<void> onRequest(  
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
@@ -18,12 +18,11 @@ class AppInterceptor extends Interceptor {
         options.headers['Authorization'] = 'Bearer $token';
       }
 
-      if (options.data != null) print("Data: ${options.data}");
+      if (options.data != null)
       
-      return handler.next(options);  // ✅ return qo'shing
+      return handler.next(options);  
     } catch (e) {
-      print('Token olishda xato: $e');
-      return handler.next(options);  // ✅ return qo'shing
+      return handler.next(options);  
     }
   }
 
@@ -32,11 +31,11 @@ class AppInterceptor extends Interceptor {
     Response response,
     ResponseInterceptorHandler handler,
   ) {
-    return handler.next(response);  // ✅ return qo'shing
+    return handler.next(response);  
   }
 
   @override
-  Future<void> onError(  // ✅ Future<void> qo'shing
+  Future<void> onError(  
     DioException err,
     ErrorInterceptorHandler handler,
   ) async {
@@ -54,7 +53,7 @@ class AppInterceptor extends Interceptor {
           ));
           
           final response = await dio.post(
-            'http://194.187.122.4:8000/en/api/v1/accounts/user/token/refresh/',
+            'http://192.168.100.177:8000/en/api/v1/accounts/user/token/refresh/',
             data: {'refresh': refreshToken},
           );
 
@@ -62,7 +61,6 @@ class AppInterceptor extends Interceptor {
             final newToken = response.data['access'];
             await TokenStorage.saveToken(newToken);
             
-            // Retry request with new token
             final opts = err.requestOptions;
             opts.headers['Authorization'] = 'Bearer $newToken';
             
@@ -76,23 +74,21 @@ class AppInterceptor extends Interceptor {
               queryParameters: opts.queryParameters,
             );
             
-            return handler.resolve(cloneReq);  // ✅ return qo'shing
+            return handler.resolve(cloneReq); 
           }
         }
         
-        // Agar refresh token ishlamasa
         await TokenStorage.deleteToken();
         await TokenStorage.deleteRefreshToken();
-        return handler.next(err);  // ✅ return qo'shing
+        return handler.next(err);  
         
       } catch (e) {
-        print('Token refresh xatosi: $e');
         await TokenStorage.deleteToken();
         await TokenStorage.deleteRefreshToken();
-        return handler.next(err);  // ✅ return qo'shing
+        return handler.next(err);  
       }
     }
     
-    return handler.next(err);  // ✅ return qo'shing
+    return handler.next(err);  
   }
 }

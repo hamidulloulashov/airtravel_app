@@ -17,7 +17,7 @@ class ApiClient {
   }
 
   static String get baseUrl =>
-      "http://194.187.122.4:8000/$_languageCode/api/v1";
+      "http://192.168.100.177:8000/$_languageCode/api/v1";
 
   ApiClient()
       : _dio = Dio(

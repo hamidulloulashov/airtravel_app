@@ -95,21 +95,6 @@ class PackageLoadingMore extends HomeState {
 
 
 
-class PackageEmpty extends HomeState {
-  final String message;
-
-  const PackageEmpty({
-    this.message = 'Hech qanday paket topilmadi',
-  });
-
-  @override
-  List<Object?> get props => [message];
-
-  @override
-  String toString() => 'PackageEmpty(message: $message)';
-}
-
-
 class PackageError extends HomeState {
   final String message;
   final List<HomeModel>? cachedPackages;
@@ -148,8 +133,6 @@ class PackageSearching extends HomeState {
   String toString() => 'PackageSearching(query: $query)';
 }
 
-
-
 class PackageSearchResults extends HomeState {
   final List<HomeModel> packages;
   final String query;
@@ -169,6 +152,18 @@ class PackageSearchResults extends HomeState {
   @override
   String toString() => 
     'PackageSearchResults(results: ${packages.length}, query: $query)';
+}
+
+class PackageEmpty extends HomeState {
+  final String? message;
+
+  const PackageEmpty({this.message});
+
+  @override
+  List<Object?> get props => [message];
+  
+  @override
+  String toString() => 'PackageEmpty(message: $message)';
 }
 
 

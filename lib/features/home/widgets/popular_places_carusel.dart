@@ -115,8 +115,6 @@ class PopularPlacesCarousel extends StatelessWidget {
               ),
             ),
         
-           
-        
             Padding(
               padding: const EdgeInsets.only(left: 50, top: 30),
               child: Text(
