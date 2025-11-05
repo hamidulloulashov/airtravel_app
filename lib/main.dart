@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:airtravel_app/core/routing/router.dart' as AppRouter;
 import 'package:airtravel_app/core/utils/app_theme.dart';
-
+import 'package:provider/provider.dart';
 import 'core/client.dart';
 
 void main() async {
@@ -19,8 +19,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: AppDependencies.providers,
+    return MultiProvider(
+      providers: [
+        Provider<ApiClient>(
+          create: (_) => ApiClient(),
+        ),
+        ...AppDependencies.providers,
+      ],
       child: ScreenUtilInit(
         designSize: const Size(428, 926),
         child: const AppView(),
@@ -41,7 +46,7 @@ class AppView extends StatelessWidget {
           title: 'Air Travel App',
           theme: AppThemes.lightTheme,
           darkTheme: AppThemes.darkTheme,
-          themeMode: state.themeMode, 
+          themeMode: state.themeMode,
           routerConfig: AppRouter.router,
         );
       },

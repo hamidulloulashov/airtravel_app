@@ -4,40 +4,32 @@ import 'package:intl/intl.dart';
 import 'package:airtravel_app/data/model/home_model.dart';
 
 class PackageCardWidget extends StatelessWidget {
-  final HomeModel package;
+  final Package package;
   final int index;
 
   const PackageCardWidget({
-    super.key,
+    Key? key,
     required this.package,
     required this.index,
-  });
-
-  int _getMaxDiscount() {
-    if (package.plans.isEmpty) return 0;
-    int maxDiscount = 0;
-    for (var plan in package.plans) {
-      if (plan.discount > maxDiscount) {
-        maxDiscount = plan.discount;
-      }
-    }
-    return maxDiscount;
-  }
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     
     return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: const Color(0xFF4CAF50),
+          width: 3,
+        ),
         boxShadow: [
           BoxShadow(
-            color: isDark 
-                ? Colors.black.withOpacity(0.3)
-                : Colors.black.withOpacity(0.08),
-            blurRadius: 15,
+            color: const Color(0xFF4CAF50).withOpacity(0.2),
+            blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
@@ -45,36 +37,33 @@ class PackageCardWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildImageSection(),
+          _buildImageSection(context),
+          
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  package.title,
-                  style: TextStyle(
-                    fontSize: 20,
+                  package.title ?? '',
+                  style: const TextStyle(
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                    color: Colors.black87,
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 10),
                 
-                if (package.destinations.isNotEmpty)
-                  _buildRouteTimeline(context),
-                
+                _buildDestinations(isDarkMode),
                 const SizedBox(height: 16),
                 
-                _buildTravelInfo(context),
-                
+                _buildTravelDetails(isDarkMode),
                 const SizedBox(height: 16),
                 
-                if (package.plans.isNotEmpty)
-                  _buildPlansSection(context),
-                
+                _buildPricingPlans(isDarkMode),
                 const SizedBox(height: 16),
-                _buildButton(),
+                
+                _buildDetailsButton(),
               ],
             ),
           ),
@@ -83,277 +72,206 @@ class PackageCardWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildImageSection() {
-    final maxDiscount = _getMaxDiscount();
-    
-    return ClipRRect(
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-      child: Stack(
-        children: [
-          SizedBox(
-            height: 200,
+  Widget _buildImageSection(BuildContext context) {
+    return Stack(
+      children: [
+        ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(17)),
+          child: SizedBox(
+            height: 180,
             width: double.infinity,
             child: CachedNetworkImage(
-              imageUrl: package.picture,
+              imageUrl: package.picture ?? '',
               fit: BoxFit.cover,
-              httpHeaders: const {
-                'Connection': 'keep-alive',
-              },
               placeholder: (context, url) => Container(
-                color: Colors.grey[300],
+                color: Colors.grey[200],
                 child: const Center(
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4CAF50)),
+                    strokeWidth: 2,
+                  ),
                 ),
               ),
-              errorWidget: (context, url, error) {
-             
-                return Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Colors.grey[300]!,
-                        Colors.grey[400]!,
-                      ],
+              errorWidget: (context, url, error) => Container(
+                color: Colors.grey[200],
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.image_not_supported, size: 40, color: Colors.grey[400]),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Rasm yuklanmadi',
+                      style: TextStyle(color: Colors.grey[500], fontSize: 12),
                     ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.landscape, 
-                        size: 64, 
-                        color: Colors.grey[600]
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Rasm yuklanmadi',
-                        style: TextStyle(
-                          color: Colors.grey[700],
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-          
-          Container(
-            height: 200,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.transparent,
-                  Colors.black.withOpacity(0.3),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
-          
-          Positioned(
-            top: 12,
-            left: 12,
-            right: 12,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                if (maxDiscount > 0)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      '-$maxDiscount%',
+        ),
+        
+        Positioned(
+          top: 12,
+          left: 12,
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF4CAF50),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.flight_takeoff, size: 12, color: Colors.white),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${package.duration ?? 0} kun',
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 12,
                         fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  )
-                else
-                  const SizedBox(),
-                
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.calendar_today, size: 12, color: Colors.black87),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${package.duration} kun',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildRouteTimeline(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: isDark 
-            ? const Color(0xFF1E3A28)
-            : const Color(0xFFF0F9F4),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          for (int i = 0; i < package.destinations.length; i++) ...[
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF4CAF50),
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: isDark ? const Color(0xFF1E3A28) : Colors.white, 
-                            width: 2
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      Flexible(
-                        child: Text(
-                          package.destinations[i].name,
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: Theme.of(context).textTheme.bodyLarge?.color,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 14),
-                    child: Text(
-                      '${package.destinations[i].duration} kun',
-                      style: TextStyle(
                         fontSize: 11,
-                        color: Theme.of(context).textTheme.bodyLarge?.color?.withOpacity(0.6),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            
-            if (i < package.destinations.length - 1)
-              Container(
-                width: 30,
-                height: 2,
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF4CAF50).withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(2),
+                  ],
                 ),
               ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTravelInfo(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: [
-        _buildInfoChip(
-          context: context,
-          icon: Icons.flight_takeoff,
-          label: _formatDateTime(package.startDate),
-          color: const Color(0xFF4CAF50),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF4CAF50),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.calendar_today, size: 12, color: Colors.white),
+                    const SizedBox(width: 4),
+                    Text(
+                      '27 Okt',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
         
-        _buildInfoChip(
-          context: context,
-          icon: Icons.flight_land,
-          label: _formatDateTime(package.endDate),
-          color: const Color(0xFF2196F3),
-        ),
-        
-        ...package.coreFeatures.map((feature) =>
-          _buildInfoChip(
-            context: context,
-            icon: Icons.verified,
-            label: feature.title,
-            color: const Color(0xFFFF9800),
+        Positioned(
+          top: 12,
+          right: 12,
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: const BoxDecoration(
+              color: Color(0xFF4CAF50),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.favorite_border,
+              color: Colors.white,
+              size: 20,
+            ),
           ),
         ),
       ],
     );
   }
 
-  String _formatDateTime(String dateStr) {
-    try {
-      final dt = DateTime.parse(dateStr);
-      return DateFormat('yyyy-MM-dd HH:mm').format(dt);
-    } catch (e) {
-      return dateStr;
+  Widget _buildDestinations(bool isDarkMode) {
+    if (package.destinations == null || package.destinations!.isEmpty) {
+      return const SizedBox.shrink();
     }
+
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: package.destinations!.map((dest) {
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: const Color(0xFF4CAF50),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.location_on,
+                size: 14,
+                color: Colors.white,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                dest.ccity ?? '',
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+    );
   }
 
-  Widget _buildInfoChip({
-    required BuildContext context,
-    required IconData icon,
-    required String label,
-    required Color color,
-  }) {
+  Widget _buildTravelDetails(bool isDarkMode) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Sayohat tarkibi',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 10),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            _buildDetailChip(Icons.shield_outlined, 'Sug\'urta', false),
+            _buildDetailChip(Icons.fastfood_outlined, 'Ovqat', false),
+            _buildDetailChip(Icons.flight_outlined, 'Visa', false),
+            _buildDetailChip(Icons.add_circle_outline, '4+', true),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDetailChip(IconData icon, String label, bool isMore) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3), width: 1),
+        color: const Color(0xFF4CAF50),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: color),
-          const SizedBox(width: 4),
-          Flexible(
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: color,
-              ),
-              overflow: TextOverflow.ellipsis,
+          Icon(
+            icon,
+            size: 14,
+            color: Colors.white,
+          ),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
             ),
           ),
         ],
@@ -361,58 +279,52 @@ class PackageCardWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildPlansSection(BuildContext context) {
+  Widget _buildPricingPlans(bool isDarkMode) {
+    if (package.plans == null || package.plans!.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Tariflar:',
+        const Text(
+          'Tariflar',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: Theme.of(context).textTheme.bodyLarge?.color,
+            color: Colors.black87,
           ),
         ),
         const SizedBox(height: 12),
-        
-        if (package.plans.length <= 2)
-          Row(
-            children: package.plans.map((plan) {
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: package.plans!.take(2).map((plan) {
+              final isFirst = package.plans!.indexOf(plan) == 0;
               return Expanded(
                 child: Container(
                   margin: EdgeInsets.only(
-                    right: package.plans.indexOf(plan) < package.plans.length - 1 ? 8 : 0,
+                    right: isFirst ? 6 : 0,
+                    left: !isFirst ? 6 : 0,
                   ),
-                  child: _buildPlanCard(plan),
+                  child: _buildPlanCard(plan, isDarkMode),
                 ),
               );
             }).toList(),
-          )
-        else
-          SizedBox(
-            height: 160,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: package.plans.length,
-              separatorBuilder: (context, index) => const SizedBox(width: 8),
-              itemBuilder: (context, index) {
-                return SizedBox(
-                  width: 160,
-                  child: _buildPlanCard(package.plans[index]),
-                );
-              },
-            ),
           ),
+        ),
       ],
     );
   }
 
-  Widget _buildPlanCard(PlanModel plan) {
+  Widget _buildPlanCard(Plan plan, bool isDarkMode) {
+    final bool hasDiscount = plan.isDiscountActive == true && (plan.discount ?? 0) > 0;
+    
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: const Color(0xFF4CAF50),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: const Color(0xFF4CAF50).withOpacity(0.3),
@@ -425,96 +337,163 @@ class PackageCardWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            plan.type.toUpperCase(),
-            style: const TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
-              color: Colors.white70,
-              letterSpacing: 0.5,
-            ),
-          ),
-          const SizedBox(height: 4),
-          
-          if (plan.discount > 0) ...[
-            Text(
-              '\$${plan.price}',
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.white70,
-                decoration: TextDecoration.lineThrough,
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  plan.type ?? '',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-            ),
-            Text(
-              '\$${plan.discountedPrice.toStringAsFixed(0)}',
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ] else
-            Text(
-              '\$${plan.price}',
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          
-          const SizedBox(height: 8),
-          
-          // ✅ Plan features
-          ...plan.features.map((feature) =>
-            Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Row(
-                children: [
-                  const Icon(Icons.check_circle, size: 12, color: Colors.white),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      feature.title,
-                      style: const TextStyle(
-                        fontSize: 10,
-                        color: Colors.white,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+              if (hasDiscount) ...[
+                const SizedBox(width: 4),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    '-${plan.discount}%',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 9,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ],
-              ),
-            ),
+                ),
+              ],
+            ],
           ),
+          const SizedBox(height: 6),
+          
+          Wrap(
+            spacing: 4,
+            crossAxisAlignment: WrapCrossAlignment.end,
+            children: [
+              if (hasDiscount)
+                Text(
+                  '\${plan.price}',
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 12,
+                    decoration: TextDecoration.lineThrough,
+                  ),
+                ),
+              Text(
+                '\${hasDiscount ? plan.discountedPrice?.toStringAsFixed(0) : plan.price}',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          
+          ...?plan.features?.take(2).map((feature) => Padding(
+            padding: const EdgeInsets.only(bottom: 5),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(
+                  Icons.check_circle,
+                  size: 13,
+                  color: Colors.white,
+                ),
+                const SizedBox(width: 5),
+                Expanded(
+                  child: Text(
+                    feature.title ?? '',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      height: 1.3,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          )),
         ],
       ),
     );
   }
 
-  Widget _buildButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: ElevatedButton(
-        onPressed: () {},
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF4CAF50),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+  Widget _buildDetailsButton() {
+    return Stack(
+      children: [
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () {},
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF4CAF50),
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              elevation: 0,
+            ),
+            child: const Text(
+              'Batafsil...',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
-          elevation: 0,
         ),
-        child: const Text(
-          'Batafsil',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
+        Positioned(
+          right: 12,
+          top: 0,
+          bottom: 0,
+          child: Container(
+            padding: const EdgeInsets.all(6),
+            decoration: const BoxDecoration(
+              color: Color(0xFFFFA726),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.info_outline,
+              color: Colors.white,
+              size: 20,
+            ),
           ),
         ),
-      ),
+      ],
     );
+  }
+
+  bool _hasDiscount() {
+    if (package.plans == null) return false;
+    return package.plans!.any((p) => p.isDiscountActive == true && (p.discount ?? 0) > 0);
+  }
+
+  int _getMaxDiscount() {
+    if (package.plans == null || package.plans!.isEmpty) return 0;
+    return package.plans!
+        .where((p) => p.isDiscountActive == true)
+        .map((p) => p.discount ?? 0)
+        .fold(0, (max, discount) => discount > max ? discount : max);
+  }
+
+  String _formatDate(String dateStr) {
+    try {
+      final date = DateTime.parse(dateStr);
+      return DateFormat('dd MMM').format(date);
+    } catch (e) {
+      return dateStr;
+    }
   }
 }

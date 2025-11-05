@@ -22,53 +22,54 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
-    return Padding(
-      padding: const EdgeInsets.only(right: 40),
-      child: Container(
-        color: Theme.of(context).appBarTheme.backgroundColor,
-        padding: const EdgeInsets.all(16),
-        child: TextField(
-          controller: widget.controller,
-          style: TextStyle(
-            color: Theme.of(context).textTheme.bodyLarge?.color,
+    return Container(
+      color: Theme.of(context).appBarTheme.backgroundColor,
+      child: Row(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 20,bottom: 10),
+              child: TextField(
+                cursorColor:  Theme.of(context).textTheme.bodyLarge?.color,
+                controller: widget.controller,
+                style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
+                ),
+                decoration: InputDecoration(
+                  hintText: 'Search',
+                  hintStyle: TextStyle(
+                    color: Theme.of(context).textTheme.bodyLarge?.color?.withOpacity(0.5),
+                  ),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(11.0),
+                    child: SvgPicture.asset(
+                          "assets/icons/search.svg"),
+                  ),
+                  suffixIcon:Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: SvgPicture.asset("assets/icons/filter.svg",),
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: isDark 
+                      ? Colors.grey[800] 
+                      : Colors.grey[100],
+                ),
+                onChanged: (value) {
+                  setState(() {});
+                },
+                onSubmitted: widget.onSearch,
+              ),
+            ),
           ),
-          decoration: InputDecoration(
-            hintText: 'Search',
-            hintStyle: TextStyle(
-              color: Theme.of(context).textTheme.bodyLarge?.color?.withOpacity(0.5),
-            ),
-            prefixIcon: Padding(
-              padding: const EdgeInsets.all(11.0),
-              child: SvgPicture.asset(
-                    "assets/icons/search.svg"),
-            ),
-            suffixIcon: widget.controller.text.isNotEmpty
-                ? IconButton(
-                    icon: Icon(
-                      Icons.clear,
-                      color: Theme.of(context).textTheme.bodyLarge?.color?.withOpacity(0.7),
-                    ),
-                    onPressed: () {
-                      widget.controller.clear();
-                      setState(() {});
-                      widget.onClear();
-                    },
-                  )
-                : null,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
-            filled: true,
-            fillColor: isDark 
-                ? Colors.grey[800] 
-                : Colors.grey[100],
-          ),
-          onChanged: (value) {
-            setState(() {});
-          },
-          onSubmitted: widget.onSearch,
-        ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Image.asset("assets/notifaction.png", width: 24,),
+          )
+        ],
       ),
     );
   }

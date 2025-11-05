@@ -1,7 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TokenStorage {
-  static const _tokenKey = 'auth_token';
+  static const _tokenKey = '';
   static const _refreshTokenKey = 'refresh_token';
 
   static Future<void> saveToken(String token) async {

@@ -1,212 +1,377 @@
+
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:airtravel_app/data/model/home_model.dart';
 import 'package:airtravel_app/data/repositories/home_repository.dart';
 import 'package:airtravel_app/features/home/managers/home_event.dart';
 import 'package:airtravel_app/features/home/managers/home_state.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
-  final HomeRepository _repository;
+  final HomeRepository repository;
   
   List<HomeModel> _allPackages = [];
   int _currentOffset = 0;
-  final int _limit = 10;
   bool _hasMore = true;
-  
-  String? _currentTitle;
-  String? _currentCountry;
-  String? _currentCity;
-  String? _currentStartDate;
-  String? _currentEndDate;
+  final int _pageSize = 10;
 
-  HomeBloc({required HomeRepository repository})
-      : _repository = repository,
-        super(const PackageInitial()) {
+  HomeBloc({required this.repository}) : super(const PackageInitial()) {
     on<LoadPackages>(_onLoadPackages);
     on<LoadMorePackages>(_onLoadMorePackages);
-    on<TogglePackageLike>(_onToggleLike);
     on<SearchPackages>(_onSearchPackages);
+    on<ClearSearch>(_onClearSearch);
+    on<RefreshPackages>(_onRefreshPackages);
+    on<ToggleFavorite>(_onToggleFavorite);
     on<FilterPackages>(_onFilterPackages);
-    on<LoadPopularPlaces>(_onLoadPopularPlaces);
-    
+    on<SortPackages>(_onSortPackages);
   }
+
 
   Future<void> _onLoadPackages(
     LoadPackages event,
     Emitter<HomeState> emit,
   ) async {
-    if (event.isRefresh) {
+    try {
+      if (event.isRefresh) {
+        emit(PackageRefreshing(oldPackages: _allPackages));
+      } else {
+        emit(const PackageLoading());
+      }
+
       _currentOffset = 0;
-      _allPackages.clear();
       _hasMore = true;
-    }
 
-    if (_allPackages.isEmpty) {
-      emit(const PackageLoading());
-    }
-
-    _currentTitle = event.title;
-    _currentCountry = event.country;
-    _currentCity = event.city;
-    _currentStartDate = event.startDate;
-    _currentEndDate = event.endDate;
-
-    try {
-      final result = await _repository.getPackages(
-        title: event.title,
-        popularPlaces: event.popularPlaces,
-        startDate: event.startDate,
-        endDate: event.endDate,
-        country: event.country,
-        city: event.city,
-        limit: event.limit ?? _limit,
-        offset: event.offset ?? 0,
-      );
-
-      result.fold(
-        (error) {
-          emit(PackageError(error.toString()));
-        },
-        (response) {
-          
-          if (response.results.isEmpty && _allPackages.isEmpty) {
-            emit(const PackageEmpty());
-          } else {
-            _allPackages = response.results;
-            _currentOffset = _allPackages.length;
-            _hasMore = response.next != null;
-            
-            emit(PackageLoaded(
-              packages: _allPackages,
-              totalCount: response.count,
-              hasMore: _hasMore,
-              currentOffset: _currentOffset,
-            ));
-          }
-        },
-      );
-    } catch (e) {
-      emit(PackageError('Xatolik yuz berdi: $e'));
-    }
-  }
-
-  Future<void> _onLoadMorePackages(
-    LoadMorePackages event,
-    Emitter<HomeState> emit,
-  ) async {
-    if (state is! PackageLoaded) return;
-    if (!_hasMore) return;
-
-    final currentState = state as PackageLoaded;
-    emit(PackageLoadingMore(currentState.packages));
-
-    try {
-      final result = await _repository.getPackages(
-        title: _currentTitle,
-        country: _currentCountry,
-        city: _currentCity,
-        startDate: _currentStartDate,
-        endDate: _currentEndDate,
-        limit: _limit,
+      final result = await repository.getPackages(
+        limit: event.limit,
         offset: _currentOffset,
       );
 
       result.fold(
         (error) {
-          emit(currentState);
-        },
-        (response) {
-          
-          _allPackages.addAll(response.results);
-          _currentOffset = _allPackages.length;
-          _hasMore = response.next != null;
-
-          emit(PackageLoaded(
-            packages: _allPackages,
-            totalCount: response.count,
-            hasMore: _hasMore,
-            currentOffset: _currentOffset,
+          emit(PackageError(
+            message: error.toString(),
+            cachedPackages: _allPackages.isNotEmpty ? _allPackages : null,
           ));
         },
+        (response) {
+          _allPackages = response.results;
+          _currentOffset = event.limit;
+          _hasMore = response.hasMore;
+
+          if (_allPackages.isEmpty) {
+            emit(const PackageEmpty(
+              message: 'Hozircha hech qanday paket yo\'q',
+            ));
+          } else {
+            emit(PackageLoaded(
+              packages: _allPackages,
+              hasMore: _hasMore,
+              currentPage: 1,
+            ));
+          }
+        },
       );
-    } catch (e) {
-      emit(currentState);
+    } catch (e, stackTrace) {
+
+      
+      emit(PackageError(
+        message: 'Xatolik yuz berdi: ${e.toString()}',
+        cachedPackages: _allPackages.isNotEmpty ? _allPackages : null,
+      ));
     }
   }
 
-  Future<void> _onToggleLike(
-    TogglePackageLike event,
+
+  Future<void> _onLoadMorePackages(
+    LoadMorePackages event,
     Emitter<HomeState> emit,
   ) async {
-    if (state is! PackageLoaded) return;
+    if (!_hasMore) {
+      return;
+    }
 
-    final currentState = state as PackageLoaded;
-    final updatedPackages = List<HomeModel>.from(currentState.packages);
-    
-    final package = updatedPackages[event.index];
-    updatedPackages[event.index] = package.copyWith(isLiked: !package.isLiked);
-
-    emit(currentState.copyWith(packages: updatedPackages));
+    if (state is PackageLoadingMore) {
+      return;
+    }
 
     try {
-      final result = await _repository.toggleLike(event.packageId);
+      final currentPage = (_currentOffset ~/ _pageSize) + 1;
+      
+
+      emit(PackageLoadingMore(
+        packages: _allPackages,
+        currentPage: currentPage,
+      ));
+
+      final result = await repository.getPackages(
+        limit: event.limit,
+        offset: _currentOffset,
+      );
 
       result.fold(
         (error) {
-          updatedPackages[event.index] = package;
-          emit(currentState.copyWith(packages: updatedPackages));
+          
+          emit(PackageLoaded(
+            packages: _allPackages,
+            hasMore: _hasMore,
+            currentPage: currentPage - 1,
+          ));
         },
-        (_) {
-          _allPackages = updatedPackages;
+        (response) {
+          
+          final newPackages = response.results.where((newPkg) {
+            return !_allPackages.any((existingPkg) => existingPkg.id == newPkg.id);
+          }).toList();
+          
+          _allPackages.addAll(newPackages);
+          _currentOffset += event.limit;
+          _hasMore = response.hasMore;
+
+
+          emit(PackageLoaded(
+            packages: _allPackages,
+            hasMore: _hasMore,
+            currentPage: currentPage,
+          ));
         },
       );
-    } catch (e) {
-      updatedPackages[event.index] = package;
-      emit(currentState.copyWith(packages: updatedPackages));
+    } catch (e, stackTrace) {
+ 
+      
+      final currentPage = (_currentOffset ~/ _pageSize);
+      emit(PackageLoaded(
+        packages: _allPackages,
+        hasMore: _hasMore,
+        currentPage: currentPage,
+      ));
     }
   }
+
 
   Future<void> _onSearchPackages(
     SearchPackages event,
     Emitter<HomeState> emit,
   ) async {
-    add(LoadPackages(
-      title: event.query,
-      isRefresh: true,
+    final query = event.query.trim();
+    
+    if (query.isEmpty) {
+      emit(PackageLoaded(
+        packages: _allPackages,
+        hasMore: _hasMore,
+      ));
+      return;
+    }
+
+    
+    emit(PackageSearching(query: query));
+
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    final searchQuery = query.toLowerCase();
+    final searchResults = _allPackages.where((package) {
+      return package.title.toLowerCase().contains(searchQuery) ||
+          package.destinationCities.toLowerCase().contains(searchQuery) ||
+          package.destinations.any((dest) => 
+            dest.ccity.toLowerCase().contains(searchQuery)
+          );
+    }).toList();
+
+
+    if (searchResults.isEmpty) {
+      emit(const PackageEmpty(
+        message: 'Qidiruv bo\'yicha natija topilmadi',
+      ));
+    } else {
+      emit(PackageSearchResults(
+        packages: searchResults,
+        query: query,
+      ));
+    }
+  }
+
+  void _onClearSearch(
+    ClearSearch event,
+    Emitter<HomeState> emit,
+  ) {
+    print('🧹 Clearing search');
+    
+    emit(PackageLoaded(
+      packages: _allPackages,
+      hasMore: _hasMore,
+      currentPage: (_currentOffset ~/ _pageSize),
     ));
   }
 
-  Future<void> _onFilterPackages(
+
+  Future<void> _onRefreshPackages(
+    RefreshPackages event,
+    Emitter<HomeState> emit,
+  ) async {
+    add(const LoadPackages(isRefresh: true));
+  }
+
+
+  void _onToggleFavorite(
+    ToggleFavorite event,
+    Emitter<HomeState> emit,
+  ) {
+    
+    final updatedPackages = _allPackages.map((package) {
+      if (package.id == event.packageId) {
+        return package.copyWith(isLiked: !package.isLiked);
+      }
+      return package;
+    }).toList();
+
+    _allPackages = updatedPackages;
+
+    if (state is PackageLoaded) {
+      final loadedState = state as PackageLoaded;
+      emit(loadedState.copyWith(packages: updatedPackages));
+    } else if (state is PackageSearchResults) {
+      final searchState = state as PackageSearchResults;
+      final updatedSearchResults = searchState.packages.map((package) {
+        if (package.id == event.packageId) {
+          return package.copyWith(isLiked: !package.isLiked);
+        }
+        return package;
+      }).toList();
+
+      emit(PackageSearchResults(
+        packages: updatedSearchResults,
+        query: searchState.query,
+      ));
+    }
+  }
+
+
+  void _onFilterPackages(
     FilterPackages event,
     Emitter<HomeState> emit,
-  ) async {
-    add(LoadPackages(
-      country: event.country,
-      city: event.city,
-      startDate: event.startDate,
-      endDate: event.endDate,
-      isRefresh: true,
-    ));
+  ) {
+
+    
+    var filteredPackages = List<HomeModel>.from(_allPackages);
+
+    if (event.destination != null && event.destination!.isNotEmpty) {
+      filteredPackages = filteredPackages.filterByDestination(event.destination!);
+    }
+
+    if (event.minPrice != null || event.maxPrice != null) {
+      filteredPackages = filteredPackages.filterByPriceRange(
+        minPrice: event.minPrice,
+        maxPrice: event.maxPrice,
+      );
+    }
+
+    if (event.minDuration != null || event.maxDuration != null) {
+      filteredPackages = filteredPackages.filterByDuration(
+        minDuration: event.minDuration,
+        maxDuration: event.maxDuration,
+      );
+    }
+
+
+    if (filteredPackages.isEmpty) {
+      emit(const PackageEmpty(
+        message: 'Filter bo\'yicha natija topilmadi',
+      ));
+    } else {
+      emit(PackageLoaded(
+        packages: filteredPackages,
+        hasMore: false, 
+        currentPage: 1,
+      ));
+    }
   }
 
-  Future<void> _onLoadPopularPlaces(
-    LoadPopularPlaces event,
+  void _onSortPackages(
+    SortPackages event,
     Emitter<HomeState> emit,
-  ) async {
-    emit(const PopularPlacesLoading());
+  ) {
+    
+    final currentState = state;
+    List<HomeModel> packagesToSort;
 
-    try {
-      final result = await _repository.getPopularPlaces();
-
-      result.fold(
-        (error) {
-          emit(PopularPlacesError(error.toString()));
-        },
-        (places) {
-          emit(PopularPlacesLoaded(places));
-        },
-      );
-    } catch (e) {
-      emit(PopularPlacesError('Xatolik yuz berdi: $e'));
+    if (currentState is PackageLoaded) {
+      packagesToSort = List.from(currentState.packages);
+    } else if (currentState is PackageSearchResults) {
+      packagesToSort = List.from(currentState.packages);
+    } else {
+      return;
     }
+
+    switch (event.sortType) {
+      case PackageSortType.priceAsc:
+        packagesToSort = packagesToSort.sortByPriceAsc();
+        break;
+
+      case PackageSortType.priceDesc:
+        packagesToSort = packagesToSort.sortByPriceDesc();
+        break;
+
+      case PackageSortType.durationAsc:
+        packagesToSort = packagesToSort.sortByDurationAsc();
+        break;
+
+      case PackageSortType.durationDesc:
+        packagesToSort = packagesToSort.sortByDurationDesc();
+        break;
+
+      case PackageSortType.newest:
+        // Sort by ID (assuming higher ID = newer)
+        packagesToSort.sort((a, b) => b.id.compareTo(a.id));
+        break;
+
+      case PackageSortType.popular:
+        // Sort by discount percentage
+        packagesToSort = packagesToSort.sortByDiscount();
+        break;
+    }
+
+    print('✅ Sorted ${packagesToSort.length} packages');
+
+    // Emit new state with sorted packages
+    if (currentState is PackageLoaded) {
+      emit(currentState.copyWith(packages: packagesToSort));
+    } else if (currentState is PackageSearchResults) {
+      emit(PackageSearchResults(
+        packages: packagesToSort,
+        query: currentState.query,
+      ));
+    }
+  }
+
+  // ============================================
+  // HELPER METHODS
+  // ============================================
+
+  /// Get favorite packages
+  List<HomeModel> get favoritePackages {
+    return _allPackages.where((pkg) => pkg.isLiked).toList();
+  }
+
+  /// Get packages with discounts
+  List<HomeModel> get discountedPackages {
+    return _allPackages.filterByDiscount();
+  }
+
+  /// Get total number of loaded packages
+  int get totalLoadedPackages => _allPackages.length;
+
+  /// Check if has cached data
+  bool get hasCachedData => _allPackages.isNotEmpty;
+
+  /// Clear cache
+  void clearCache() {
+    print('🧹 Clearing cache');
+    _allPackages.clear();
+    _currentOffset = 0;
+    _hasMore = true;
+  }
+
+  @override
+  Future<void> close() {
+    print('👋 HomeBloc closing');
+    clearCache();
+    return super.close();
   }
 }
