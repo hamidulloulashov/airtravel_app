@@ -42,7 +42,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                   fontSize: 16,
                 ),
                 decoration: InputDecoration(
-                  hintText: 'Abcdefghijk',
+                  hintText: 'Search',
                   hintStyle: TextStyle(
                     color: Theme.of(context)
                         .textTheme

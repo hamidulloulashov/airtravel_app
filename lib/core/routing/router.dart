@@ -7,6 +7,7 @@ import 'package:airtravel_app/features/accaunt/pages/payment_history_page.dart';
 import 'package:airtravel_app/features/accaunt/pages/privacy_policy_page.dart';
 import 'package:airtravel_app/features/accaunt/pages/profile_edit_page.dart';
 import 'package:airtravel_app/features/accaunt/pages/profile_page.dart';
+import 'package:airtravel_app/features/home/pages/favorit_page.dart';
 import 'package:airtravel_app/features/home/pages/home_page.dart';
 import 'package:airtravel_app/features/onboarding/pages/onboarding_page.dart';
 import 'package:airtravel_app/features/onboarding/pages/splash_page.dart';
@@ -21,6 +22,10 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: Routes.splash,
       builder: (context, state) => const SplashPage(),
+    ),
+      GoRoute(
+      path: Routes.like,
+      builder: (context, state) => const FavoritesPage(),
     ),
     GoRoute(
       path: Routes.login,

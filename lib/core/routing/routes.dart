@@ -14,5 +14,6 @@ class Routes {
   static const language = '/language';
   static const order = '/order';
   static const payment = '/payment';
+  static const like = "/like";
 
 }

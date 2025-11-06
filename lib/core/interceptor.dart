@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 
 class AppInterceptor extends Interceptor {
   @override
-  Future<void> onRequest(  
+  Future<void> onRequest(
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
@@ -18,11 +18,10 @@ class AppInterceptor extends Interceptor {
         options.headers['Authorization'] = 'Bearer $token';
       }
 
-      if (options.data != null)
-      
-      return handler.next(options);  
+
+      return handler.next(options);
     } catch (e) {
-      return handler.next(options);  
+      return handler.next(options);
     }
   }
 
@@ -31,16 +30,17 @@ class AppInterceptor extends Interceptor {
     Response response,
     ResponseInterceptorHandler handler,
   ) {
-    return handler.next(response);  
+    return handler.next(response);
   }
 
   @override
-  Future<void> onError(  
+  Future<void> onError(
     DioException err,
     ErrorInterceptorHandler handler,
   ) async {
     final code = err.response?.statusCode;
     final path = err.requestOptions.path;
+
 
     if (code == 401) {
       try {
@@ -53,7 +53,7 @@ class AppInterceptor extends Interceptor {
           ));
           
           final response = await dio.post(
-            'http://192.168.100.177:8000/en/api/v1/accounts/user/token/refresh/',
+            'http://194.187.122.4:8000/en/api/v1/accounts/user/token/refresh/',
             data: {'refresh': refreshToken},
           );
 
@@ -74,21 +74,21 @@ class AppInterceptor extends Interceptor {
               queryParameters: opts.queryParameters,
             );
             
-            return handler.resolve(cloneReq); 
+            return handler.resolve(cloneReq);
           }
         }
         
         await TokenStorage.deleteToken();
         await TokenStorage.deleteRefreshToken();
-        return handler.next(err);  
+        return handler.next(err);
         
       } catch (e) {
         await TokenStorage.deleteToken();
         await TokenStorage.deleteRefreshToken();
-        return handler.next(err);  
+        return handler.next(err);
       }
     }
     
-    return handler.next(err);  
+    return handler.next(err);
   }
 }

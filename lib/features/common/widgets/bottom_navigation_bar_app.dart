@@ -45,8 +45,8 @@ class BottomNavigationBarApp extends StatelessWidget {
             context,
             icon: AppIcons.heart,
             label: "Sevimlilar",
-            route: Routes.profile,
-            isSelected: location == Routes.profile,
+            route: Routes.like,
+            isSelected: location == Routes.like,
           ),
           _navItem(
             context,
