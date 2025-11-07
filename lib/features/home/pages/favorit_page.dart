@@ -1,3 +1,5 @@
+import 'package:airtravel_app/core/token_storage.dart';
+import 'package:airtravel_app/features/common/widgets/app_bar_widget.dart';
 import 'package:airtravel_app/features/home/widgets/package_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:airtravel_app/data/model/home_model.dart';
@@ -13,6 +15,7 @@ class FavoritesPage extends StatefulWidget {
 class _FavoritesPageState extends State<FavoritesPage> {
   List<Package> _favoritePackages = [];
   Map<String, bool> _likedStatus = {};
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -20,40 +23,81 @@ class _FavoritesPageState extends State<FavoritesPage> {
     _loadFavorites();
   }
 
-  void _loadFavorites() {
+  Future<void> _loadFavorites() async {
     setState(() {
+      _isLoading = true;
+    });
+
+    final favorites = await TokenStorage.getFavorites();
+    
+    setState(() {
+      _favoritePackages = favorites;
+      
+      _likedStatus.clear();
+      for (var package in _favoritePackages) {
+        _likedStatus[package.id?.toString() ?? ''] = true;
+      }
+      
+      _isLoading = false;
     });
   }
 
-  void _removeFavorite(Package package) {
+  Future<void> _removeFavorite(Package package) async {
     setState(() {
       _favoritePackages.removeWhere((p) => p.id == package.id);
       _likedStatus[package.id?.toString() ?? ''] = false;
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Row(
-          children: [
-            Icon(Icons.favorite_border, color: Colors.white, size: 20),
-            SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                'Sevimlilardan o\'chirildi',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+    await TokenStorage.removeFromFavorites(package);
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Row(
+            children: [
+              Icon(Icons.favorite_border, color: Colors.white, size: 20),
+              SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Sevimlilardan o\'chirildi',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
+          duration: const Duration(seconds: 2),
+          backgroundColor: Colors.grey[700],
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
-        duration: const Duration(seconds: 2),
-        backgroundColor: Colors.grey[700],
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.all(16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+      );
+    }
+  }
+
+  Future<void> _clearAllFavorites() async {
+    if (mounted && context.canPop()) {
+      context.pop();
+    }
+    
+    setState(() {
+      _favoritePackages.clear();
+      _likedStatus.clear();
+    });
+    
+    await TokenStorage.clearAllFavorites();
+    
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Barcha sevimlilar o\'chirildi'),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 2),
         ),
-      ),
-    );
+      );
+    }
   }
 
   @override
@@ -62,29 +106,28 @@ class _FavoritesPageState extends State<FavoritesPage> {
 
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF1A1A1A) : const Color(0xFFF5F5F5),
-      appBar: AppBar(
-        title: const Text(
-          'Sevimlilar',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: const Color(0xFF4CAF50),
-        foregroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
+      appBar: AppBarWidget(
+        showThemeToggle: true,
+        showBackButton: false, 
+        title: 'Sevimlilar',
         actions: [
           if (_favoritePackages.isNotEmpty)
             IconButton(
               icon: const Icon(Icons.delete_sweep_outlined),
-              onPressed: () {
-                _showClearAllDialog();
-              },
+              onPressed: _showClearAllDialog,
               tooltip: 'Hammasini tozalash',
             ),
         ],
       ),
-      body: _favoritePackages.isEmpty
-          ? _buildEmptyState()
-          : _buildFavoritesList(),
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(
+                color: Color(0xFF4CAF50),
+              ),
+            )
+          : _favoritePackages.isEmpty
+              ? _buildEmptyState()
+              : _buildFavoritesList(),
     );
   }
 
@@ -118,7 +161,8 @@ class _FavoritesPageState extends State<FavoritesPage> {
           const SizedBox(height: 30),
           ElevatedButton.icon(
             onPressed: () {
-              context.pop();
+              
+              context.go('/home'); 
             },
             icon: const Icon(Icons.explore),
             label: const Text('Paketlarni ko\'rish'),
@@ -202,7 +246,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
   void _showClearAllDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: const Text('Hammasini o\'chirish?'),
         content: const Text(
           'Barcha sevimli paketlarni o\'chirmoqchimisiz?',
@@ -212,22 +256,13 @@ class _FavoritesPageState extends State<FavoritesPage> {
         ),
         actions: [
           TextButton(
-            onPressed: () => context.pop(),
+            onPressed: () => Navigator.of(dialogContext).pop(),
             child: const Text('Bekor qilish'),
           ),
           ElevatedButton(
             onPressed: () {
-              setState(() {
-                _favoritePackages.clear();
-                _likedStatus.clear();
-              });
-              context.pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Barcha sevimlilar o\'chirildi'),
-                  backgroundColor: Colors.red,
-                ),
-              );
+              Navigator.of(dialogContext).pop(); 
+              _clearAllFavorites(); 
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,

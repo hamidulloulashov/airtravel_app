@@ -1,17 +1,18 @@
 import 'package:airtravel_app/core/utils/app_colors.dart';
+import 'package:airtravel_app/core/utils/app_icons.dart';
 import 'package:airtravel_app/features/common/managers/theme_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/utils/app_icons.dart';
 
 class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   final Widget? leadingIcon;
   final String? title;
   final List<Widget>? actions;
   final bool showThemeToggle;
+  final bool showBackButton; 
 
   const AppBarWidget({
     super.key,
@@ -19,6 +20,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
     this.title,
     this.actions,
     this.showThemeToggle = false,
+    this.showBackButton = true, 
   });
 
   @override
@@ -28,27 +30,33 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       automaticallyImplyLeading: false,
       leadingWidth: 75,
-      leading: leadingIcon != null
-          ? Center(child: leadingIcon)
-          : Center(
-              child: IconButton(
-                onPressed: () {
-                  if (context.canPop()) {
-                    context.pop();
-                  }
-                },
-                icon: SvgPicture.asset(
-                  AppIcons.arrowLeft,
-                  width: 28.w,
-                  height: 28.h,
-                  fit: BoxFit.scaleDown,
-                  colorFilter: ColorFilter.mode(
-                    Theme.of(context).appBarTheme.foregroundColor ?? Colors.black,
-                    BlendMode.srcIn,
+      leading: !showBackButton
+          ? null
+          : leadingIcon != null
+              ? Center(child: leadingIcon)
+              : Center(
+                  child: IconButton(
+                    onPressed: () {
+                      try {
+                        if (context.canPop()) {
+                          context.pop();
+                        }
+                      } catch (e) {
+                        debugPrint('Cannot pop: $e');
+                      }
+                    },
+                    icon: SvgPicture.asset(
+                      AppIcons.arrowLeft,
+                      width: 28.w,
+                      height: 28.h,
+                      fit: BoxFit.scaleDown,
+                      colorFilter: ColorFilter.mode(
+                        Theme.of(context).appBarTheme.foregroundColor ?? Colors.black,
+                        BlendMode.srcIn,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
       title: title != null
           ? Text(
               title!,

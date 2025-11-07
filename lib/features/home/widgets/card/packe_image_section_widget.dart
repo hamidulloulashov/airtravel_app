@@ -1,3 +1,4 @@
+import 'package:airtravel_app/core/token_storage.dart';
 import 'package:airtravel_app/features/home/pages/favorit_page.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -36,6 +37,7 @@ class _PackageImageSectionState extends State<PackeImageSectionWidget>
     _scaleAnimation = Tween<double>(begin: 1.0, end: 1.3).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
+    _checkIfLiked();
   }
 
   @override
@@ -54,63 +56,82 @@ class _PackageImageSectionState extends State<PackeImageSectionWidget>
     super.dispose();
   }
 
-  void _toggleLike() {
+  // Sevimli ekanligini tekshirish
+  Future<void> _checkIfLiked() async {
+    final isLiked = await TokenStorage.isFavorite(widget.package.id);
+    
+    if (mounted && isLiked != _isLiked) {
+      setState(() {
+        _isLiked = isLiked;
+      });
+    }
+  }
+
+  Future<void> _toggleLike() async {
+    final newLikeState = !_isLiked;
+    
     setState(() {
-      _isLiked = !_isLiked;
+      _isLiked = newLikeState;
     });
 
     _animationController.forward().then((_) {
       _animationController.reverse();
     });
 
+    // TokenStorage orqali saqlash
+    bool success = await TokenStorage.toggleFavorite(widget.package);
+
+    // Callback chaqirish
     widget.onLikeChanged?.call(_isLiked);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(
-              _isLiked ? Icons.favorite : Icons.favorite_border,
-              color: Colors.white,
-              size: 20,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                _isLiked
-                    ? 'Sevimlilar ro\'yxatiga qo\'shildi'
-                    : 'Sevimlilardan o\'chirildi',
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(
+                _isLiked ? Icons.favorite : Icons.favorite_border,
+                color: Colors.white,
+                size: 20,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  _isLiked
+                      ? 'Sevimlilar ro\'yxatiga qo\'shildi'
+                      : 'Sevimlilardan o\'chirildi',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
+          duration: const Duration(seconds: 2),
+          backgroundColor: _isLiked ? const Color(0xFF4CAF50) : Colors.grey[700],
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          action: _isLiked
+              ? SnackBarAction(
+                  label: 'Ko\'rish',
+                  textColor: Colors.white,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const FavoritesPage(),
+                      ),
+                    );
+                  },
+                )
+              : null,
         ),
-        duration: const Duration(seconds: 2),
-        backgroundColor: _isLiked ? const Color(0xFF4CAF50) : Colors.grey[700],
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.all(16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        action: _isLiked
-            ? SnackBarAction(
-                label: 'Ko\'rish',
-                textColor: Colors.white,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const FavoritesPage(),
-                    ),
-                  );
-                },
-              )
-            : null,
-      ),
-    );
+      );
+    }
   }
 
   @override
