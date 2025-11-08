@@ -43,9 +43,13 @@ class _LanguagePageState extends State<LanguagePage> {
       {'title': 'English', 'subtitle': '(En)', 'value': 'en'},
       {'title': 'Русский', 'subtitle': '(Ru)', 'value': 'ru'},
     ];
-
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    // final isDark = Theme.of(context).appBarTheme.foregroundColor == Brightness.dark;
     return Scaffold(
-      appBar: AppBarWidget(title: 'Language'),
+      appBar: AppBarWidget(
+        showThemeToggle: true,
+        title: 'Language',
+      ),
       body: ListView(
         children: [
           Padding(
@@ -55,7 +59,7 @@ class _LanguagePageState extends State<LanguagePage> {
               style: TextStyle(
                 fontWeight: FontWeight.w700,
                 fontSize: 14.sp,
-                color: AppColors.grey,
+                color: isDark ? AppColors.grenWhite : AppColors.grey,
               ),
             ),
           ),
@@ -79,7 +83,7 @@ class _LanguagePageState extends State<LanguagePage> {
                       padding: EdgeInsets.symmetric(horizontal: 90, vertical: 50),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        spacing: 90,
+                        spacing: 70.h,
                         children: [
                           Text(
                             textAlign: TextAlign.center,
@@ -87,12 +91,15 @@ class _LanguagePageState extends State<LanguagePage> {
                             style: TextStyle(
                               fontSize: 20.sp,
                               fontWeight: FontWeight.w700,
-                              color: AppColors.containerBlack,
+                              color:  isDark ? AppColors.grenWhite : AppColors.grey,
                             ),
                           ),
-                          TextButtonPopular(title: "OK", onPressed: (){
-                            context.pop();
-                          },)
+                          TextButtonPopular(
+                            title: "OK",
+                            onPressed: () {
+                              context.pop();
+                            },
+                          )
                         ],
                       ),
                     ),

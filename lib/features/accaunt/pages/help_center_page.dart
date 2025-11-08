@@ -11,10 +11,11 @@ class HelpCenterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        appBar: AppBarWidget(title: 'Call Markaz'),
+        appBar: AppBarWidget(title: 'Call Markaz', showThemeToggle: true,),
         body: Column(
           children: [
             buildTabBar(),
@@ -43,7 +44,7 @@ class HelpCenterPage extends StatelessWidget {
             ],
             indicatorColor: AppColors.containerBlack,
             labelColor: AppColors.containerGreen,
-            unselectedLabelColor: AppColors.textGrey,
+            unselectedLabelColor:  AppColors.textGrey,
             indicatorWeight: 4.h,
             indicatorSize: TabBarIndicatorSize.tab,
             labelStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),

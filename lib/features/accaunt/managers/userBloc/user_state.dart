@@ -13,8 +13,8 @@ abstract class UserState with _$UserState {
   }) = _UserState;
 
   factory UserState.initial() => const UserState(
-    status: Status.initial,
-    user: null,
-    errorMessage: null,
-  );
+        status: Status.initial,
+        user: null,
+        errorMessage: null,
+      );
 }

@@ -15,19 +15,22 @@ class TextFieldPopular extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
-      cursorColor: AppColors.containerBlack,
+      cursorColor:  Theme.of(context).appBarTheme.foregroundColor ?? Colors.black,
+      style: TextStyle(color:  isDark ? AppColors.grenWhite : AppColors.grey,),
       decoration: InputDecoration(
         contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
         hintText: hintText,
+        hintStyle: TextStyle(color:  Theme.of(context).appBarTheme.foregroundColor ?? Colors.black,),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16.r),
           borderSide: BorderSide.none,
         ),
         filled: true,
-        fillColor: AppColors.grenWhite,
+        fillColor: isDark ? AppColors.grey : AppColors.grenWhite,
       ),
     );
   }

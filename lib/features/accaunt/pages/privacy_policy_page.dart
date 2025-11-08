@@ -43,8 +43,9 @@ class _PrivacyPolicyPageState extends State<PrivacyPolicyPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      appBar: AppBarWidget(title: 'Maxfiylik Siyosati '),
+      appBar: AppBarWidget(title: 'Maxfiylik Siyosati ', showThemeToggle: true,),
       body: SingleChildScrollView(
         padding: EdgeInsetsGeometry.symmetric(horizontal: 24.w, vertical: 24.h),
         physics: AlwaysScrollableScrollPhysics(),
@@ -54,38 +55,38 @@ class _PrivacyPolicyPageState extends State<PrivacyPolicyPage> {
           children: [
             Text(
               '1. Types of Data We Collect',
-              style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w700, color: AppColors.grey),
+              style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w700, color:  isDark ? AppColors.grenWhite : AppColors.grey,),
             ),
             Text(
               collect,
               style: TextStyle(
                 fontWeight: FontWeight.w400,
                 fontSize: 14.sp,
-                color: AppColors.grey,
+                color: isDark ? AppColors.grenWhite : AppColors.grey,
               ),
             ),
             Text(
               '2. Use of Your Personal Data',
-              style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w700, color: AppColors.grey),
+              style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w700, color:  isDark ? AppColors.grenWhite : AppColors.grey,),
             ),
             Text(
               data,
               style: TextStyle(
                 fontWeight: FontWeight.w400,
                 fontSize: 14.sp,
-                color: AppColors.grey,
+                color:  isDark ? AppColors.grenWhite : AppColors.grey,
               ),
             ),
             Text(
               '3. Disclosure of Your Personal Data',
-              style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w700, color: AppColors.grey),
+              style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w700, color:  isDark ? AppColors.grenWhite : AppColors.grey,),
             ),
             Text(
               disclosure,
               style: TextStyle(
                 fontWeight: FontWeight.w400,
                 fontSize: 14.sp,
-                color: AppColors.grey,
+                color:  isDark ? AppColors.grenWhite : AppColors.grey,
               ),
             ),
           ],

@@ -39,7 +39,7 @@ class ProfileItemWidget extends StatelessWidget {
                   height: 24.h,
                   fit: BoxFit.scaleDown,
                   colorFilter: iconColorFilter ??
-                      const ColorFilter.mode(AppColors.grey, BlendMode.srcIn),
+                      ColorFilter.mode(Theme.of(context).appBarTheme.foregroundColor ?? Colors.black, BlendMode.srcIn),
                 ),
                 SizedBox(width: 16.w),
                 Text(
@@ -47,7 +47,7 @@ class ProfileItemWidget extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 18.sp,
-                    color: textColor ?? AppColors.grey,
+                    color:  Theme.of(context).appBarTheme.foregroundColor ?? Colors.black,
                   ),
                 ),
               ],

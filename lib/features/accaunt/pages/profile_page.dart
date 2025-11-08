@@ -2,14 +2,24 @@ import 'dart:io';
 import 'package:airtravel_app/core/routing/routes.dart';
 import 'package:airtravel_app/core/utils/app_colors.dart';
 import 'package:airtravel_app/core/utils/app_icons.dart';
+import 'package:airtravel_app/features/accaunt/managers/userBloc/user_bloc.dart';
+import 'package:airtravel_app/features/accaunt/managers/userBloc/user_state.dart';
 import 'package:airtravel_app/features/accaunt/widgets/profile_item_widget.dart';
+import 'package:airtravel_app/features/common/widgets/app_bar_widget.dart';
 import 'package:airtravel_app/features/common/widgets/bottom_navigation_bar_app.dart';
 import 'package:airtravel_app/features/common/widgets/text_button_popular.dart';
+import 'package:airtravel_app/core/client.dart';
+import 'package:airtravel_app/data/repositories/user_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+
+import '../../../core/token_storage.dart';
+import '../../../core/utils/status.dart';
+import '../../common/managers/theme_bloc.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -33,190 +43,265 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 10.h),
-            child: Column(
-              spacing: 20.h,
-              children: [
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 42.w,
-                    ),
-                    Text(
-                      'Profile',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 24.sp,
-                        color: AppColors.grey,
-                      ),
-                    ),
-                    Spacer(),
-                    SvgPicture.asset(AppIcons.more)
-                  ],
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return BlocProvider(
+      create: (context) => UserBloc(userRepository: UserRepository(ApiClient()))..add(FetchUserData()),
+      child: Scaffold(
+        body: RefreshIndicator(
+          onRefresh: () async {
+            context.read<UserBloc>().add(FetchUserData());
+          },
+          child: SafeArea(
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 24.w,
+                  vertical: 10.h,
                 ),
-                Stack(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CircleAvatar(
-                      radius: 60.r,
-                      backgroundImage: rasm != null ? FileImage(rasm!) : null,
-                      backgroundColor: Colors.grey.shade200,
-                      child: rasm == null ? Icon(Icons.person, size: 60.sp, color: Colors.grey) : null,
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 4,
-                      child: GestureDetector(
-                        onTap: _rasmTanlash,
-                        child: CircleAvatar(
-                          radius: 18.r,
-                          backgroundColor: Colors.green,
-                          child: Icon(Icons.edit, color: Colors.white, size: 18),
+                    SizedBox(height: 10.h),
+                    Row(
+                      children: [
+                        SizedBox(width: 42.w),
+                        Text(
+                          'Profile',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 24.sp,
+                            color: Theme.of(context).appBarTheme.foregroundColor ?? AppColors.grey,
+                          ),
                         ),
-                      ),
+                        const Spacer(),
+                        GestureDetector(
+                          onTap: () {
+                            context.push(Routes.profileEdit);
+                          },
+                          child: SvgPicture.asset(
+                            AppIcons.more,
+                            colorFilter: ColorFilter.mode(
+                              Theme.of(context).appBarTheme.foregroundColor ?? Colors.black,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            context.read<ThemeBloc>().add(ThemeToggled());
+                          },
+                          icon: Icon(
+                            isDark ? Icons.light_mode : Icons.dark_mode,
+                            size: 24.sp,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                Divider(
-                  color: AppColors.cardGrey,
-                ),
-                Column(
-                  spacing: 10.h,
-                  children: [
-                    ProfileItemWidget(
-                      onTap: () {
-                        context.push(Routes.profileEdit);
-                      },
-                      text: 'Profilni taxrirlash',
-                      icon: AppIcons.profile,
-                      iconBack: AppIcons.arrowRightGreen,
-                    ),
-                    ProfileItemWidget(
-                      onTap: () {
-                        context.push(Routes.notificationSettings);
-                      },
-                      text: 'Bildirishnoma',
-                      icon: AppIcons.notifications,
-                      iconBack: AppIcons.arrowRightGreen,
-                    ),
-                    ProfileItemWidget(
-                      onTap: () {
-                        context.push(Routes.payment);
-                      },
-                      text: 'To’lovlar',
-                      icon: AppIcons.wallet,
-                      iconBack: AppIcons.arrowRightGreen,
-                    ),
-                    ProfileItemWidget(
-                      onTap: () {
-                        context.push(Routes.order);
-                      },
-                      text: 'Buyurtma tarixi',
-                      icon: AppIcons.shieldDone,
-                      iconBack: AppIcons.arrowRightGreen,
-                    ),
-                    ProfileItemWidget(
-                      onTap: () {
-                        context.push(Routes.language);
-                      },
-                      text: 'Ilova tili',
-                      icon: AppIcons.moreCircle,
-                      iconBack: AppIcons.arrowRightGreen,
-                    ),
-                    ProfileItemWidget(
-                      onTap: () {
-                        context.push(Routes.privacyPolicy);
-                      },
-                      text: 'Maxfiylik Siyosati',
-                      icon: AppIcons.lock,
-                      iconBack: AppIcons.arrowRightGreen,
-                    ),
-                    ProfileItemWidget(
-                      onTap: () {
-                        context.push(Routes.helpCenter);
-                      },
-                      text: 'Call Markaz',
-                      icon: AppIcons.infoSquare,
-                      iconBack: AppIcons.arrowRightGreen,
-                    ),
-                    ProfileItemWidget(
-                      onTap: () {},
-                      text: 'Ulashish ',
-                      icon: AppIcons.send,
-                    ),
-                    ProfileItemWidget(
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          builder: (context) => Padding(
-                            padding: EdgeInsetsGeometry.symmetric(horizontal: 24.w, vertical: 35.h),
-                            child: SizedBox(
-                              width: double.infinity,
-                              height: 290.h,
-                              child: Column(
-                                spacing: 48.h,
+                    SizedBox(height: 24.h),
+                    BlocBuilder<UserBloc, UserState>(
+                      builder: (context, state) {
+                        final user = state.user;
+                        if (state.status == Status.loading || user == null) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        return Column(
+                          children: [
+                            Align(
+                              alignment: AlignmentGeometry.center,
+                              child: Stack(
                                 children: [
-                                  Text(
-                                    'Chiqish',
-                                    style: TextStyle(
-                                      fontSize: 24.sp,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColors.error,
+                                  CircleAvatar(
+                                    radius: 60.r,
+                                    backgroundImage: rasm != null
+                                        ? FileImage(rasm!)
+                                        : (user.profilePhoto != null ? NetworkImage(user.profilePhoto!) : null)
+                                            as ImageProvider?,
+                                    backgroundColor: Colors.grey.shade200,
+                                    child: rasm == null && user.profilePhoto == null
+                                        ? Icon(Icons.person, size: 60.sp, color: Colors.grey)
+                                        : null,
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 4,
+                                    child: GestureDetector(
+                                      onTap: _rasmTanlash,
+                                      child: CircleAvatar(
+                                        radius: 18.r,
+                                        backgroundColor: Colors.green,
+                                        child: Icon(Icons.edit, color: Colors.white, size: 18),
+                                      ),
                                     ),
                                   ),
-                                  Text(
-                                    textAlign: TextAlign.center,
-                                    'Haqiqatan ham tizimdan chiqmoqchimisiz?',
-                                    style: TextStyle(
-                                      fontSize: 20.sp,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColors.grey,
-                                    ),
-                                  ),
-                                  Row(
-                                    spacing: 12.w,
-                                    children: [
-                                      TextButtonPopular(
-                                        onPressed: (){
-                                          context.pop();
-                                        },
-                                        title: 'Yo’q',
-                                        width: 184,
-                                        buttonColor: AppColors.cardGrey,
-                                        textColor: AppColors.containerBlack,
-                                      ),
-                                      TextButtonPopular(
-                                        title: 'Ha',
-                                        width: 184,
-                                      ),
-                                    ],
-                                  )
                                 ],
                               ),
                             ),
-                          ),
+                            SizedBox(height: 12.h),
+                            Text(
+                              "${user.firstName} ${user.lastName}",
+                              style: TextStyle(
+                                fontSize: 24.sp,
+                                fontWeight: FontWeight.w700,
+                                color: Theme.of(context).appBarTheme.foregroundColor ?? AppColors.grey,
+                              ),
+                            ),
+                            SizedBox(height: 4.h),
+                            Text(
+                              user.phoneNumber,
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Theme.of(context).appBarTheme.foregroundColor ?? AppColors.grey,
+                              ),
+                            ),
+                          ],
                         );
                       },
-                      textColor: AppColors.error,
-                      iconColorFilter: ColorFilter.mode(
-                        AppColors.error,
-                        BlendMode.srcIn,
-                      ),
-                      text: 'Chiqish',
-                      icon: AppIcons.logout,
                     ),
+                    SizedBox(height: 12.h),
+                    Divider(color: AppColors.cardGrey, height: 32.h),
+                    Column(
+                      spacing: 12.h,
+                      children: [
+                        ProfileItemWidget(
+                          onTap: () {
+                            context.push(Routes.profileEdit);
+                          },
+                          text: 'Profilni taxrirlash',
+                          icon: AppIcons.profile,
+                          iconBack: AppIcons.arrowRightGreen,
+                        ),
+                        ProfileItemWidget(
+                          onTap: () {
+                            context.push(Routes.notificationSettings);
+                          },
+                          text: 'Bildirishnoma',
+                          icon: AppIcons.notifications,
+                          iconBack: AppIcons.arrowRightGreen,
+                        ),
+                        ProfileItemWidget(
+                          onTap: () {
+                            context.push(Routes.payment);
+                          },
+                          text: 'To’lovlar',
+                          icon: AppIcons.wallet,
+                          iconBack: AppIcons.arrowRightGreen,
+                        ),
+                        ProfileItemWidget(
+                          onTap: () {
+                            context.push(Routes.order);
+                          },
+                          text: 'Buyurtma tarixi',
+                          icon: AppIcons.shieldDone,
+                          iconBack: AppIcons.arrowRightGreen,
+                        ),
+                        ProfileItemWidget(
+                          onTap: () {
+                            context.push(Routes.language);
+                          },
+                          text: 'Ilova tili',
+                          icon: AppIcons.moreCircle,
+                          iconBack: AppIcons.arrowRightGreen,
+                        ),
+                        ProfileItemWidget(
+                          onTap: () {
+                            context.push(Routes.privacyPolicy);
+                          },
+                          text: 'Maxfiylik Siyosati',
+                          icon: AppIcons.lock,
+                          iconBack: AppIcons.arrowRightGreen,
+                        ),
+                        ProfileItemWidget(
+                          onTap: () {
+                            context.push(Routes.helpCenter);
+                          },
+                          text: 'Call Markaz',
+                          icon: AppIcons.infoSquare,
+                          iconBack: AppIcons.arrowRightGreen,
+                        ),
+                        ProfileItemWidget(
+                          onTap: () {},
+                          text: 'Ulashish ',
+                          icon: AppIcons.send,
+                        ),
+                        ProfileItemWidget(
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (context) => Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 35.h),
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  height: 290.h,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Chiqish',
+                                        style: TextStyle(
+                                          fontSize: 24.sp,
+                                          fontWeight: FontWeight.w700,
+                                          color: AppColors.error,
+                                        ),
+                                      ),
+                                      Text(
+                                        'Haqiqatan ham tizimdan chiqmoqchimisiz?',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 20.sp,
+                                          fontWeight: FontWeight.w700,
+                                          color: AppColors.grey,
+                                        ),
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          TextButtonPopular(
+                                            onPressed: () {
+                                              context.pop();
+                                            },
+                                            title: 'Yo’q',
+                                            width: 184,
+                                            buttonColor: AppColors.cardGrey,
+                                            textColor: AppColors.containerBlack,
+                                          ),
+                                          TextButtonPopular(
+                                            onPressed: () async {
+                                              await TokenStorage.clearTokensOnly();
+                                              context.go(Routes.signUp);
+                                            },
+                                            title: 'Ha',
+                                            width: 184,
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                          textColor: AppColors.error,
+                          iconColorFilter: ColorFilter.mode(
+                            AppColors.error,
+                            BlendMode.srcIn,
+                          ),
+                          text: 'Chiqish',
+                          icon: AppIcons.logout,
+                        ),
+                      ],
+                    )
                   ],
-                )
-              ],
+                ),
+              ),
             ),
           ),
         ),
+        bottomNavigationBar: const BottomNavigationBarApp(),
       ),
-      bottomNavigationBar: const BottomNavigationBarApp(),
     );
   }
 }

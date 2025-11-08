@@ -15,6 +15,7 @@ class FaqQuestionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     const Color questionColor = AppColors.containerGreen;
     return BlocProvider(
       create: (context) => HelpCenterBloc(
@@ -71,7 +72,7 @@ class FaqQuestionWidget extends StatelessWidget {
                               child: Text(
                                 item.answer,
                                 style: TextStyle(
-                                  color: Colors.grey.shade700,
+                                  color: isDark ? AppColors.grenWhite : AppColors.grey,
                                   height: 1.5,
                                 ),
                               ),

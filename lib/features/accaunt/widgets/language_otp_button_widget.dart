@@ -18,6 +18,7 @@ class LanguageOptionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(10.r),
@@ -31,7 +32,7 @@ class LanguageOptionTile extends StatelessWidget {
               style: TextStyle(
                 fontWeight: FontWeight.w400,
                 fontSize: 18.sp,
-                color: AppColors.containerBlack,
+                color: isDark ? AppColors.grenWhite : AppColors.grey,
               ),
             ),
             Icon(
@@ -39,8 +40,8 @@ class LanguageOptionTile extends StatelessWidget {
                   ? Icons.radio_button_checked
                   : Icons.radio_button_off,
               color: isSelected
-                  ? AppColors.containerBlack
-                  : AppColors.grey,
+                  ? isDark ? AppColors.grenWhite : AppColors.grey
+                  : isDark ? AppColors.grenWhite : AppColors.grey,
               size: 24.w,
             ),
           ],

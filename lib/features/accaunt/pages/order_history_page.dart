@@ -28,16 +28,32 @@ class OrderHistoryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<OrderBloc, OrderState>(
       builder: (context, state) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
         if (state.status == Status.loading) {
           return Center(child: CircularProgressIndicator());
         }
         if (state.status == Status.error) {
-          return Center(child: Text("Xatolik yuz berdi!"));
+          return Scaffold(
+            appBar: AppBarWidget(
+              title: 'Buyurtmalar Tarixi',
+            ),
+            body: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'akkauntga tokensiz kirdiz aka',
+                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 25.sp),
+                )
+              ],
+            ),
+          );
         }
         if (state.status == Status.success) {
           final orders = state.orders;
           return Scaffold(
             appBar: AppBarWidget(
+              showThemeToggle: true,
               title: 'Buyurtmalar Tarixi',
               actions: [
                 IconButton(
@@ -48,7 +64,7 @@ class OrderHistoryPage extends StatelessWidget {
                       height: 28.h,
                       fit: BoxFit.scaleDown,
                       colorFilter: ColorFilter.mode(
-                        AppColors.grey,
+                        isDark ? AppColors.grenWhite : AppColors.grey,
                         BlendMode.srcIn,
                       ),
                     ))
@@ -65,10 +81,9 @@ class OrderHistoryPage extends StatelessWidget {
                   final order = orders[index];
                   return Container(
                     margin: EdgeInsets.only(bottom: 10.h),
-                    padding: EdgeInsets.all(10.w),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.r),
-                      color: AppColors.containerGrey,
+                      color: isDark ? AppColors.grey : AppColors.containerGrey,
                     ),
                     child: Row(
                       children: [
@@ -86,8 +101,8 @@ class OrderHistoryPage extends StatelessWidget {
                             errorBuilder: (context, error, stackTrace) {
                               return Container(
                                 width: 133.w,
-                                height: 133.h,
-                                color: Colors.grey[300],
+                                height: 134.h,
+                                color: AppColors.containerGrey,
                                 child: Icon(Icons.broken_image, size: 50),
                               );
                             },
@@ -98,124 +113,125 @@ class OrderHistoryPage extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      order.package.title,
-                                      style: TextStyle(
-                                        fontSize: 16.sp,
-                                        fontWeight: FontWeight.w700,
-                                        color: AppColors.containerBlack,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  Spacer(),
-                                  Text(
-                                    formatDate(order.created),
-                                    style: TextStyle(
-                                      color: AppColors.grey,
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
+                              Text(
+                                order.package.title,
+                                style: TextStyle(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w700,
+                                  color:  isDark ? AppColors.grenWhite : AppColors.containerBlack,
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
                               SizedBox(height: 5.h),
-                              Row(
-                                children: [
-                                  Text(
-                                    'Qayerdan ',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 12.sp,
-                                      color: AppColors.textGrey,
-                                    ),
-                                  ),
-                                  Spacer(),
-                                  Expanded(
-                                    child: Text(
-                                      order.fromCity,
-                                      style: TextStyle(
-                                        fontSize: 12.sp,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.containerBlack,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
+                              Text(
+                                'Qayerdan',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 12.sp,
+                                  color: AppColors.textGrey,
+                                ),
                               ),
                               SizedBox(height: 2.h),
                               Row(
                                 children: [
                                   Text(
-                                    'Qayerga ',
+                                    'Qayerga',
                                     style: TextStyle(
                                       fontWeight: FontWeight.w600,
                                       fontSize: 12.sp,
                                       color: AppColors.textGrey,
                                     ),
                                   ),
-                                  Spacer(),
-                                  Expanded(
-                                    child: Text(
-                                      order.toCity,
-                                      style: TextStyle(
-                                        fontSize: 12.sp,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.containerBlack,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
+                                  SizedBox(
+                                    width: 10.w,
                                   ),
                                 ],
                               ),
                               SizedBox(height: 5.h),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              Text(
+                                "${order.priceTotal}\$",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 20.sp,
+                                  color:  isDark ? AppColors.grenWhite : AppColors.containerBlack,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                            child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              formatDate(order.created),
+                              style: TextStyle(
+                                color: isDark ? AppColors.grenWhite : AppColors.grey,
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            SizedBox(height: 5.h),
+                            Text(
+                              order.fromCity,
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                                color: isDark ? AppColors.grenWhite : AppColors.containerBlack,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            SizedBox(height: 2.h),
+                            Text(
+                              order.toCity,
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                                color:  isDark ? AppColors.grenWhite : AppColors.containerBlack,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            SizedBox(height: 5.h),
+                            Container(
+                              height: 19.h,
+                              padding: EdgeInsets.symmetric(horizontal: 1.w, vertical: 1.h),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(11.r),
+                                border: Border.all(color: AppColors.containerGreen),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text(
-                                    "${order.priceTotal}\$",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 20.sp,
-                                      color: AppColors.containerBlack,
+                                  Container(
+                                    width: 15.w,
+                                    height: 15.h,
+                                    padding: EdgeInsets.all(2),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: AppColors.containerGreen
+                                    ),
+                                    child: SvgPicture.asset(
+                                      AppIcons.profile,
+                                      colorFilter: ColorFilter.mode(AppColors.white, BlendMode.srcIn),
+                                      width: 12.w,
+                                      height: 12.h,
                                     ),
                                   ),
-                                  Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.h),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(11.r),
-                                      border: Border.all(color: AppColors.containerGreen),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        SvgPicture.asset(
-                                          AppIcons.profile,
-                                          colorFilter: ColorFilter.mode(AppColors.containerGreen, BlendMode.srcIn),
-                                          width: 12.w,
-                                          height: 12.h,
-                                        ),
-                                        SizedBox(width: 3.w),
-                                        Text(
-                                          '${order.id} kishi uchun',
-                                          style: TextStyle(
-                                            fontSize: 10.sp,
-                                            fontWeight: FontWeight.w600,
-                                            color: AppColors.containerGreen,
-                                          ),
-                                        ),
-                                      ],
+                                  SizedBox(width: 3.w),
+                                  Text(
+                                    '${order.id} kishi uchun',
+                                    style: TextStyle(
+                                      fontSize: 10.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.containerGreen,
                                     ),
                                   ),
                                 ],
                               ),
-                            ],
-                          ),
-                        )
+                            ),
+                          ],
+                        )),
+                        SizedBox(width: 12.w),
                       ],
                     ),
                   );

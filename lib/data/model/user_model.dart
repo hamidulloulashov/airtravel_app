@@ -7,6 +7,7 @@ class UserModel {
   final String phoneNumber;
   final bool isVerified;
   final double balance;
+  final String? profilePhoto;
 
   UserModel({
     required this.firstName,
@@ -15,6 +16,7 @@ class UserModel {
     required this.phoneNumber,
     required this.isVerified,
     required this.balance,
+    this.profilePhoto,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -27,15 +29,16 @@ class UserModel {
       phoneNumber: json['phone_number'] ?? '',
       isVerified: json['is_verified'] ?? false,
       balance: (json['balance'] ?? 0).toDouble(),
+      profilePhoto: json['profile_photo'],
     );
   }
+
   Map<String, dynamic> toJsonForPatch() {
     return {
       'first_name': firstName,
       'last_name': lastName,
       'phone_number': phoneNumber,
-      'region': region.id,
+      'region': region.id != 0 ? region.id : null,
     };
   }
-
 }

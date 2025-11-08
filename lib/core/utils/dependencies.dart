@@ -1,7 +1,9 @@
 import 'package:airtravel_app/data/repositories/aut_repository.dart';
 import 'package:airtravel_app/data/repositories/home_repository.dart';
 import 'package:airtravel_app/data/repositories/order_repository.dart';
+import 'package:airtravel_app/data/repositories/payment_repository.dart';
 import 'package:airtravel_app/features/accaunt/managers/orderBloc/order_bloc.dart';
+import 'package:airtravel_app/features/accaunt/managers/paymentBloc/payment_bloc.dart';
 import 'package:airtravel_app/features/common/managers/theme_bloc.dart';
 import 'package:airtravel_app/data/repositories/base_repository.dart';
 import 'package:airtravel_app/data/repositories/user_repository.dart';
@@ -47,6 +49,11 @@ class AppDependencies {
           create: (context) => OrderBloc(
             orderRepo: OrderRepository(client),
           )..add(OrdersLoading()),
-        )
+        ),
+        BlocProvider<PaymentBloc>(
+          create: (context) => PaymentBloc(
+            paymentRepo: PaymentRepository(client),
+          )..add(PaymentsLoading()),
+        ),
       ];
 }

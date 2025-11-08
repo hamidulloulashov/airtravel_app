@@ -63,7 +63,6 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                   body: Center(child: CircularProgressIndicator()),
                 );
               }
-
               final user = state.user;
               final regionList = baseState.regions;
 
@@ -80,9 +79,9 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                   );
                 }
               }
-
+              final isDark = Theme.of(context).brightness == Brightness.dark;
               return Scaffold(
-                appBar: const AppBarWidget(title: "Ma’lumotlarni tahrirlash"),
+                appBar: const AppBarWidget(title: "Ma’lumotlarni tahrirlash", showThemeToggle: true,),
                 body: Padding(
                   padding: EdgeInsets.fromLTRB(24.w, 24.h, 24.w, 48.h),
                   child: Column(
@@ -92,12 +91,12 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                         children: [
                           CircleAvatar(
                             radius: 60.r,
-                            backgroundImage:
-                            photo != null ? FileImage(photo!) : null,
                             backgroundColor: Colors.grey.shade200,
-                            child: photo == null
-                                ? Icon(Icons.person,
-                                size: 60.sp, color: Colors.grey)
+                            backgroundImage: photo != null
+                                ? FileImage(photo!)
+                                : (user?.profilePhoto != null ? NetworkImage(user!.profilePhoto!) : null),
+                            child: (photo == null && user?.profilePhoto == null)
+                                ? Icon(Icons.person, size: 60.sp, color: Colors.grey)
                                 : null,
                           ),
                           Positioned(
@@ -126,32 +125,38 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                         hintText: "Familiyangiz",
                       ),
                       SizedBox(height: 16.h),
-                      DropdownButtonFormField<RegionModel>(
-                        value: selectedRegion,
-                        decoration: InputDecoration(
-                          hintText: "Viloyatingiz",
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16.r),
-                            borderSide: BorderSide.none,
-                          ),
-                          filled: true,
-                          fillColor: AppColors.grenWhite,
-                        ),
-                        items: regionList
-                            .map(
-                              (r) => DropdownMenuItem(
-                            value: r,
-                            child: Text(r.title),
-                          ),
-                        )
-                            .toList(),
-                        onChanged: (newRegion) {
-                          setState(() {
-                            selectedRegion = newRegion;
-                          });
-                        },
+                  DropdownButtonFormField<RegionModel>(
+                    style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                    value: selectedRegion,
+                    decoration: InputDecoration(
+                      hintText: "Viloyatingiz",
+                      hintStyle: TextStyle(color: isDark ? Colors.white54 : Colors.black54),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16.r),
+                        borderSide: BorderSide.none,
                       ),
-                      const Spacer(),
+                      filled: true,
+                      fillColor: isDark ? AppColors.grey : AppColors.grenWhite,
+                    ),
+                    items: regionList
+                        .map(
+                          (r) => DropdownMenuItem(
+                        value: r,
+                        child: Text(
+                          r.title,
+                          style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                        ),
+                      ),
+                    )
+                        .toList(),
+                    onChanged: (newRegion) {
+                      setState(() {
+                        selectedRegion = newRegion;
+                      });
+                    },
+                  ),
+
+                  const Spacer(),
                       TextButtonPopular(
                         onPressed: () {
                           if (user == null || selectedRegion == null) return;
@@ -163,11 +168,12 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                             phoneNumber: user.phoneNumber,
                             isVerified: user.isVerified,
                             balance: user.balance,
+                            profilePhoto: user.profilePhoto,
                           );
 
-                          context
-                              .read<UserBloc>()
-                              .add(UpdateUserData(updatedUser));
+                          context.read<UserBloc>().add(
+                            UpdateUserData(updatedUser, photo: photo),
+                          );
                         },
                         title: 'Saqlash',
                       ),
@@ -182,3 +188,4 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     );
   }
 }
+

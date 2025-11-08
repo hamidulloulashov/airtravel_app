@@ -17,7 +17,7 @@ import '../../features/auth/pages/sign_up_page.dart';
 import '../../features/auth/pages/verify_code_page.dart';
 
 final GoRouter router = GoRouter(
-  initialLocation: Routes.home,
+  initialLocation: Routes.splash,
   routes: [
     GoRoute(
       path: Routes.splash,
@@ -69,7 +69,6 @@ final GoRouter router = GoRouter(
             'isNewUser': true,
           };
         }
-
         return ProfileInfoPage(extra: params);
       },
     ),

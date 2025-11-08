@@ -17,6 +17,7 @@ class HelpButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Material(
       color: Colors.white,
       borderRadius: BorderRadius.circular(12),
@@ -28,7 +29,7 @@ class HelpButtonWidget extends StatelessWidget {
           height: 72.h,
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
           decoration: BoxDecoration(
-            color: AppColors.containerGrey,
+            color: isDark ? AppColors.grey : AppColors.containerGrey,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: AppColors.borderGrey),
             boxShadow: [
@@ -47,6 +48,7 @@ class HelpButtonWidget extends StatelessWidget {
                 width: 24.w,
                 height: 24.h,
                 fit: BoxFit.scaleDown,
+                colorFilter: ColorFilter.mode(isDark ? AppColors.grenWhite : AppColors.containerBlack, BlendMode.srcIn),
                 placeholderBuilder: (context) =>
                     const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2)),
                 errorBuilder: (context, error, stackTrace) {
@@ -57,10 +59,10 @@ class HelpButtonWidget extends StatelessWidget {
               const SizedBox(width: 20),
               Text(
                 label,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black,
+                  color: isDark ? AppColors.grenWhite : AppColors.containerBlack,
                 ),
               ),
             ],
