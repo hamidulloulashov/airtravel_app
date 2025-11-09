@@ -53,5 +53,6 @@ class AppIcons {
   static const send = "assets/icons/Send.svg";
   static const call = "assets/icons/Call.svg";
   static const ticket = "assets/icons/Ticket.svg";
+  static const cilRoom = "assets/icons/cil_room.svg";
   static const arrowRightGreen = "assets/icons/ArrowRightGreen.svg";
 }

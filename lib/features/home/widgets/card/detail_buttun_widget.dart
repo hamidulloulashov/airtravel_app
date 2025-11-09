@@ -1,11 +1,18 @@
+import 'package:airtravel_app/core/routing/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../data/model/home_model.dart';
 
 class DetailButtunWidget extends StatelessWidget {
   final VoidCallback? onPressed;
+  final Package package;
 
   const DetailButtunWidget({
     Key? key,
     this.onPressed,
+    required this.package,
+
   }) : super(key: key);
 
   @override
@@ -18,16 +25,11 @@ class DetailButtunWidget extends StatelessWidget {
             width: double.maxFinite,
             height: 44,
             child: ElevatedButton(
-              onPressed: onPressed ??
-                  () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Batafsil sahifaga o\'tilmoqda...'),
-                        duration: Duration(seconds: 2),
-                        backgroundColor: Color(0xFF4CAF50),
-                      ),
-                    );
-                  },
+              onPressed: onPressed ?? () {
+                print('Package ID: ${package.id}');
+                context.push('/accommodation/${package.id}');
+              },
+
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF4CAF50),
                 foregroundColor: Colors.white,

@@ -35,7 +35,7 @@ class OrderHistoryPage extends StatelessWidget {
         if (state.status == Status.error) {
           return Scaffold(
             appBar: AppBarWidget(
-              title: 'Buyurtmalar Tarixi',
+              title: 'Buyrutmalar Tarixi',
             ),
             body: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -46,6 +46,16 @@ class OrderHistoryPage extends StatelessWidget {
                   style: TextStyle(fontWeight: FontWeight.w700, fontSize: 25.sp),
                 )
               ],
+            ),
+          );
+        }
+        if (state.orders.isEmpty) {
+          return Scaffold(
+            appBar: AppBarWidget(
+              title: 'Buyrutmalar Tarixi',
+            ),
+            body: Center(
+              child: Text("hozircha buyrutmalaringiz yo'q"),
             ),
           );
         }
@@ -118,7 +128,7 @@ class OrderHistoryPage extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 16.sp,
                                   fontWeight: FontWeight.w700,
-                                  color:  isDark ? AppColors.grenWhite : AppColors.containerBlack,
+                                  color: isDark ? AppColors.grenWhite : AppColors.containerBlack,
                                 ),
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -153,7 +163,7 @@ class OrderHistoryPage extends StatelessWidget {
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 20.sp,
-                                  color:  isDark ? AppColors.grenWhite : AppColors.containerBlack,
+                                  color: isDark ? AppColors.grenWhite : AppColors.containerBlack,
                                 ),
                               ),
                             ],
@@ -187,7 +197,7 @@ class OrderHistoryPage extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.w600,
-                                color:  isDark ? AppColors.grenWhite : AppColors.containerBlack,
+                                color: isDark ? AppColors.grenWhite : AppColors.containerBlack,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -206,10 +216,7 @@ class OrderHistoryPage extends StatelessWidget {
                                     width: 15.w,
                                     height: 15.h,
                                     padding: EdgeInsets.all(2),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: AppColors.containerGreen
-                                    ),
+                                    decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.containerGreen),
                                     child: SvgPicture.asset(
                                       AppIcons.profile,
                                       colorFilter: ColorFilter.mode(AppColors.white, BlendMode.srcIn),

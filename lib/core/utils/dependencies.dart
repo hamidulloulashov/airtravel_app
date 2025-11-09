@@ -1,3 +1,4 @@
+import 'package:airtravel_app/data/repositories/accommodation_repository.dart';
 import 'package:airtravel_app/data/repositories/aut_repository.dart';
 import 'package:airtravel_app/data/repositories/home_repository.dart';
 import 'package:airtravel_app/data/repositories/order_repository.dart';
@@ -9,6 +10,7 @@ import 'package:airtravel_app/data/repositories/base_repository.dart';
 import 'package:airtravel_app/data/repositories/user_repository.dart';
 import 'package:airtravel_app/features/accaunt/managers/baseBloc/base_bloc.dart';
 import 'package:airtravel_app/features/accaunt/managers/userBloc/user_bloc.dart';
+import 'package:airtravel_app/features/home/managers/accommodationBloc/accommodation_bloc.dart';
 import 'package:airtravel_app/features/home/managers/home_bloc.dart';
 import 'package:airtravel_app/features/home/managers/home_event.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -55,5 +57,10 @@ class AppDependencies {
             paymentRepo: PaymentRepository(client),
           )..add(PaymentsLoading()),
         ),
+        BlocProvider<AccommodationBloc>(
+          create: (context) => AccommodationBloc(
+            repository: AccommodationRepository(client),
+          ),
+        )
       ];
 }

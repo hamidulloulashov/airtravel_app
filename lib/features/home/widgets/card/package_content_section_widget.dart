@@ -64,7 +64,7 @@ class PackageContentSectionWidget extends StatelessWidget {
           const SizedBox(height: 6),
           PirisingPlansWidget(plans: package.plans),
           const SizedBox(height: 12),
-          DetailButtunWidget(onPressed: onDetailsPressed),
+          DetailButtunWidget(onPressed: onDetailsPressed, package: package,),
         ],
       ),
     );

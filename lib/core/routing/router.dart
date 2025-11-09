@@ -7,10 +7,12 @@ import 'package:airtravel_app/features/accaunt/pages/payment_history_page.dart';
 import 'package:airtravel_app/features/accaunt/pages/privacy_policy_page.dart';
 import 'package:airtravel_app/features/accaunt/pages/profile_edit_page.dart';
 import 'package:airtravel_app/features/accaunt/pages/profile_page.dart';
+import 'package:airtravel_app/features/home/pages/accommodation_details_page.dart';
 import 'package:airtravel_app/features/home/pages/favorit_page.dart';
 import 'package:airtravel_app/features/home/pages/home_page.dart';
 import 'package:airtravel_app/features/onboarding/pages/onboarding_page.dart';
 import 'package:airtravel_app/features/onboarding/pages/splash_page.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/pages/profile_info_page.dart';
 import '../../features/auth/pages/sign_up_page.dart';
@@ -23,7 +25,7 @@ final GoRouter router = GoRouter(
       path: Routes.splash,
       builder: (context, state) => const SplashPage(),
     ),
-      GoRoute(
+    GoRoute(
       path: Routes.like,
       builder: (context, state) => const FavoritesPage(),
     ),
@@ -103,6 +105,25 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: Routes.payment,
       builder: (context, state) => PaymentHistoryPage(),
-    )
+    ),
+    GoRoute(
+      path: '/accommodation/:id',
+      builder: (context, state) {
+        final idStr = state.pathParameters['id'];
+        if (idStr == null) {
+          return const Scaffold(
+            body: Center(child: Text('ID yo‘q')),
+          );
+        }
+        final id = int.tryParse(idStr);
+        if (id == null) {
+          return const Scaffold(
+            body: Center(child: Text('ID noto‘g‘ri')),
+          );
+        }
+        return AccommodationDetailsPage(id: id);
+
+      },
+    ),
   ],
 );
