@@ -1,14 +1,15 @@
 import 'package:airtravel_app/core/utils/app_colors.dart';
+import 'package:airtravel_app/core/utils/app_icons.dart';
 import 'package:airtravel_app/core/utils/status.dart';
 import 'package:airtravel_app/features/common/widgets/app_bar_widget.dart';
 import 'package:airtravel_app/features/home/pages/accommodation_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../data/model/detail_model.dart';
 import '../managers/accommodationBloc/accommodation_bloc.dart';
 import '../managers/accommodationBloc/accommodation_state.dart';
-import '../widgets/accommodation/feature_icon_widget.dart';
 
 class TravelDetail extends StatefulWidget {
   final int tripId;
@@ -31,362 +32,388 @@ class _TravelDetailState extends State<TravelDetail> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: const AppBarWidget(
-        showThemeToggle: true,
-      ),
+      appBar: AppBarWidget(showThemeToggle: true),
       body: BlocBuilder<AccommodationBloc, AccommodationState>(
         builder: (context, state) {
-          switch (state.status) {
-            case Status.loading:
-              return const Center(child: CircularProgressIndicator());
-            case Status.error:
-              return Center(child: Text(state.errorMessage ?? "Ma'lumotni yuklashda xatolik"));
-            case Status.success:
-              final trip = state.umraTripDetail;
-              if (trip == null) {
-                return const Center(child: Text("Ma'lumot topilmadi"));
-              }
-              final minPrice =
-                  trip.plans.isNotEmpty ? trip.plans.map((p) => p.discountedPrice).reduce((a, b) => a < b ? a : b) : 0;
-              return SingleChildScrollView(
+          if (state.status == Status.loading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (state.status == Status.error) {
+            return Center(child: Text(state.errorMessage ?? "Ma'lumotni yuklashda xatolik"));
+          }
+          final trip = state.umraTripDetail;
+          if (trip == null) {
+            return const Center(child: Text("Ma'lumot topilmadi"));
+          }
+          final isDark = Theme.of(context).brightness == Brightness.dark;
+          final minPrice =
+              trip.plans.isNotEmpty ? trip.plans.map((p) => p.discountedPrice).reduce((a, b) => a < b ? a : b) : 0;
+
+          return Stack(
+            children: [
+              SingleChildScrollView(
+                padding: EdgeInsets.only(bottom: 80.h),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Stack(
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildImageGallery(trip.pictures.first.picture, context),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 14.w),
+                    Container(
+                      width: double.infinity,
+                      height: 250.h,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: NetworkImage(trip.pictures.first.picture),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 14.w),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 10.h),
+                          Card(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 9.w, vertical: 6.h),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  SizedBox(height: 10.h),
-                                  SizedBox(
-                                    width: 398.w,
-                                    child: Card(
-                                      child: Padding(
-                                        padding: EdgeInsetsGeometry.symmetric(horizontal: 9.w, vertical: 6.h),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          spacing: 2.h,
-                                          children: [
-                                            Text(trip.title,
-                                                style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold)),
-                                            Text(trip.description.split('\n').first,
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(fontSize: 12.sp, color: AppColors.grey)),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
+                                  Text(trip.title, style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold)),
+                                  Text(
+                                    trip.description.split('\n').first,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(fontSize: 12.sp, color: AppColors.grey),
                                   ),
-                                  SizedBox(height: 5.h),
-                                  _buildTripFeatures(trip, isDark),
-                                  SizedBox(height: 20.h),
-                                  Text("Sayohat kundaligi",
-                                      style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w700)),
-                                  SizedBox(height: 15.h),
-                                  DailyTimelineWidget(days: trip.days, isDark: isDark),
-                                  SizedBox(height: 20.h),
-                                  Text("Tariflar", style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w700)),
-                                  SizedBox(height: 15.h),
-                                  _buildTariffs(trip.plans),
-                                  SizedBox(height: 20.h),
                                 ],
                               ),
                             ),
-                          ],
-                        ),
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: _buildFooter(minPrice.toString()),
-                        ),
-                      ],
+                          ),
+                          SizedBox(height: 10.h),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              spacing: 10.w,
+                              children: [
+                                ...List.generate(trip.destinations.length, (index) {
+                                  return Container(
+                                    height: 25.h,
+                                    decoration: BoxDecoration(
+                                        color: isDark ? AppColors.containerBlack : AppColors.grenWhite,
+                                        borderRadius: BorderRadius.circular(11.r),
+                                        border: Border.all(color: AppColors.containerGreen)),
+                                    child: Row(
+                                      spacing: 2,
+                                      children: [
+                                        Container(
+                                          padding: EdgeInsets.all(2),
+                                          width: 20.w,
+                                          height: 20.h,
+                                          alignment: Alignment.center,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: AppColors.containerGreen,
+                                          ),
+                                          child: SvgPicture.asset(AppIcons.calendar),
+                                        ),
+                                        Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              "${trip.destinations[index].duration}",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 12.sp,
+                                                color: AppColors.containerGreen,
+                                              ),
+                                            ),
+                                            Text(
+                                              "Kun",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 4.sp,
+                                                color: AppColors.containerGreen,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Text(
+                                          trip.destinations[index].city,
+                                          style: TextStyle(
+                                            fontSize: 14.sp,
+                                            fontWeight: FontWeight.w600,
+                                            color: isDark ? AppColors.white : AppColors.containerGreen,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                })
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 21.h),
+                          Text(
+                            'Sayohat tarkibi',
+                            style: TextStyle(
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.w700,
+                              color: isDark ? AppColors.grenWhite : AppColors.containerBlack,
+                            ),
+                          ),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              spacing: 10.w,
+                              children: [
+                                ...List.generate(trip.coreFeatures.length, (index) {
+                                  return Container(
+                                    height: 25.h,
+                                    decoration: BoxDecoration(
+                                        color: isDark ? AppColors.containerBlack : AppColors.grenWhite,
+                                        borderRadius: BorderRadius.circular(11.r),
+                                        border: Border.all(color: AppColors.containerGreen)),
+                                    child: Row(
+                                      spacing: 2,
+                                      children: [
+                                        Container(
+                                          padding: EdgeInsets.all(2),
+                                          width: 20.w,
+                                          height: 20.h,
+                                          alignment: Alignment.center,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: AppColors.containerGreen,
+                                          ),
+                                          child: SvgPicture.asset(AppIcons.tick),
+                                        ),
+                                        Text(
+                                          trip.coreFeatures[index].title,
+                                          style: TextStyle(
+                                            fontSize: 14.sp,
+                                            fontWeight: FontWeight.w600,
+                                            color: isDark ? AppColors.white : AppColors.containerGreen,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                })
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 15.h),
+                          Text(
+                            'Sayohat kundaligi',
+                            style: TextStyle(
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.w700,
+                              color: isDark ? AppColors.grenWhite : AppColors.containerBlack,
+                            ),
+                          ),
+                          SizedBox(height: 15.h),
+                          SizedBox(
+                            width: 397.w,
+                            child: Container(
+                              child: Column(
+                                children: [
+                                  SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      spacing: 9.w,
+                                      children: [
+                                        ...List.generate(trip.days.length, (index) {
+                                          final day = trip.days;
+                                          return Container(
+                                            height: 59.h,
+                                            padding: EdgeInsetsGeometry.symmetric(horizontal: 14.w, vertical: 6.h),
+                                            decoration: BoxDecoration(
+                                                color: AppColors.containerGrey,
+                                                borderRadius: BorderRadiusGeometry.circular(10.r)),
+                                            child: Column(
+                                              children: [
+                                                Text(
+                                                  "${day[index].dayNumber} Kun",
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w700,
+                                                    fontSize: 15.sp,
+                                                    color: isDark ? AppColors.containerBlack : AppColors.containerBlack,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  day[index].date,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  maxLines: 1,
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w700,
+                                                    fontSize: 15.sp,
+                                                    color: isDark ? AppColors.containerBlack : AppColors.containerBlack,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        })
+                                      ],
+                                    ),
+                                  ),
+                                  // Column(
+                                  //   children: [
+                                  //     ...List.generate(trip.pictures.length, (index) {
+                                  //       return Container(
+                                  //         width: 321.w,
+                                  //         height: 125.h,
+                                  //         padding: EdgeInsetsGeometry.symmetric(
+                                  //           vertical: 9.h,
+                                  //           horizontal: 22.w,
+                                  //         ),
+                                  //         decoration: BoxDecoration(
+                                  //           borderRadius: BorderRadius.only(
+                                  //               bottomRight: Radius.circular(20.r),
+                                  //               bottomLeft: Radius.circular(5.r),
+                                  //               topLeft: Radius.circular(20.r),
+                                  //               topRight: Radius.circular(5.r)),
+                                  //           border: Border.all(
+                                  //             color: AppColors.containerGreyDark,
+                                  //           ),
+                                  //         ),
+                                  //         child: Column(
+                                  //           children: [
+                                  //             Row(
+                                  //               children: [
+                                  //                 Text(
+                                  //                   'Uchish',
+                                  //                   style: TextStyle(
+                                  //                     fontWeight: FontWeight.w700,
+                                  //                     fontSize: 14.sp,
+                                  //                     color: isDark ? AppColors.grenWhite : AppColors.containerBlack,
+                                  //                   ),
+                                  //                 ),
+                                  //               ],
+                                  //             )
+                                  //           ],
+                                  //         ),
+                                  //       );
+                                  //     })
+                                  //   ],
+                                  // ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 20.h),
+                          Text("Tariflar", style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w700)),
+                          SizedBox(height: 15.h),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                ...List.generate(
+                                  trip.plans.length,
+                                  (index) {
+                                    final tariff = trip.plans;
+                                    return Stack(
+                                      clipBehavior: Clip.none,
+                                      children: [
+                                        Container(
+                                          width: 183.w,
+                                          height: 263.h,
+                                          decoration: BoxDecoration(
+                                            color: AppColors.succesGren,
+                                            border: Border.all(
+                                              color: AppColors.cardYellow,
+                                              width: 3.sp,
+                                            ),
+                                            borderRadius: BorderRadius.circular(16.r),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          top: -15.h,
+                                          left: 0,
+                                          right: 0,
+                                          child: Container(
+                                            alignment: Alignment.center,
+                                            padding: EdgeInsets.symmetric(horizontal: 15.w),
+                                            height: 29.h,
+                                            decoration: BoxDecoration(
+                                              color: isDark ? AppColors.containerBlack : AppColors.grenWhite,
+                                              borderRadius: BorderRadius.circular(10.r),
+                                              border: Border.all(color: AppColors.containerGreen),
+                                            ),
+                                            child: Text(
+                                              tariff[index].type.title,
+                                              style: TextStyle(
+                                                fontSize: 16.sp,
+                                                fontWeight: FontWeight.w700,
+                                                color: AppColors.containerGreen,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+
+                                  },
+                                )
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 100.h),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-              );
-
-            default:
-              return const Center(child: Text("Ma'lumot yuklanmoqda"));
-          }
-        },
-      ),
-    );
-  }
-
-  Widget _buildImageGallery(String url, BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: 250.h,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: NetworkImage(url),
-          fit: BoxFit.cover,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTripFeatures(DetailModel trip, bool isDark) {
-    final List<Widget> dayFeatures = trip.destinations.map((d) {
-      return Padding(
-        padding: EdgeInsets.only(right: 15.w),
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
-          decoration: BoxDecoration(
-            color: AppColors.containerGreen,
-            borderRadius: BorderRadius.circular(15.r),
-          ),
-          child: Row(
-            children: [
-              const Icon(Icons.location_on, size: 16, color: Colors.white),
-              SizedBox(width: 5.w),
-              Text('${d.duration} ${d.city.split(" ").first}', style: TextStyle(fontSize: 12.sp, color: Colors.white)),
-            ],
-          ),
-        ),
-      );
-    }).toList();
-    final List<Widget> coreFeatureWidgets = trip.coreFeatures.map((f) {
-      return Padding(
-        padding: EdgeInsets.only(right: 15.w),
-        child: Row(
-          children: [
-            FeatureIconWidget(
-              url: f.icon,
-              width: 18.w,
-              height: 18.h,
-            ),
-            SizedBox(width: 5.w),
-            Text(f.title.split(' ').first, style: TextStyle(fontSize: 12.sp, color: AppColors.containerGreen)),
-          ],
-        ),
-      );
-    }).toList();
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(children: dayFeatures),
-        SizedBox(height: 10.h),
-        Wrap(spacing: 15.w, runSpacing: 5.h, children: coreFeatureWidgets),
-      ],
-    );
-  }
-
-  Widget _buildTariffs(List<UmraTariff> tariffs) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        spacing: 15.w,
-        children: tariffs.map((tariff) {
-          return TariffCardWidget(tariff: tariff);
-        }).toList(),
-      ),
-    );
-  }
-
-  Widget _buildFooter(String minPrice) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 5)],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Narxidan boshlab", style: TextStyle(fontSize: 10.sp, color: AppColors.grey)),
-              Text("$minPrice\$", style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold)),
-            ],
-          ),
-          SizedBox(width: 20.w),
-          Expanded(
-            child: ElevatedButton.icon(
-              onPressed: () {},
-              icon: const Icon(Icons.shopping_bag_outlined, size: 20, color: Colors.white),
-              label: Text("Buyurtma berish", style: TextStyle(color: Colors.white, fontSize: 16.sp)),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.containerGreen,
-                padding: EdgeInsets.symmetric(vertical: 12.h),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
               ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class TariffCardWidget extends StatelessWidget {
-  final UmraTariff tariff; // To'g'ri model
-
-  const TariffCardWidget({super.key, required this.tariff});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 170.w,
-      decoration: BoxDecoration(
-        color: AppColors.containerGreen,
-        borderRadius: BorderRadius.circular(12.r),
-      ),
-      padding: EdgeInsets.all(12.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(tariff.type.title.split(' ').first,
-              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold, color: Colors.white)),
-          SizedBox(height: 2.h),
-          Text("${tariff.discountedPrice}\$", style: TextStyle(fontSize: 14.sp, color: Colors.white)),
-          SizedBox(height: 8.h),
-          ...tariff.features
-              .map((feature) => Padding(
-                    padding: EdgeInsets.only(bottom: 4.h),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Icon(Icons.check_circle_outline, size: 14, color: Colors.white70),
-                        SizedBox(width: 5.w),
-                        Expanded(
-                          child: Text(feature.title,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontSize: 10.sp, color: Colors.white70)),
-                        ),
-                      ],
-                    ),
-                  ))
-              .toList(),
-          SizedBox(height: 8.h),
-        ],
-      ),
-    );
-  }
-}
-
-class DailyTimelineWidget extends StatelessWidget {
-  final List<PackageDay> days;
-  final bool isDark;
-
-  const DailyTimelineWidget({super.key, required this.days, required this.isDark});
-
-  @override
-  Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> staticSteps = [
-      {'title': 'Uchish', 'time': '8:30 am', 'description': 'Toshkentdan Madinaga parvoz', 'isHotel': false},
-      {
-        'title': 'Mehmonxonada',
-        'time': '5:30 pm',
-        'description': 'Madina Al Munavvara. Mehmonxona nomi',
-        'isHotel': true,
-        'accommodationId': 101
-      },
-      {
-        'title': 'Ziyoratgoh',
-        'time': '8:30 am',
-        'description': 'Qubo masjidi. Madina boʻylab ekskursiya',
-        'isHotel': false
-      },
-    ];
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: days.map((day) {
-        final dayIndex = day.dayNumber;
-        final isLast = dayIndex == days.length;
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              margin: EdgeInsets.symmetric(vertical: 10.h),
-              padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.h),
-              decoration: BoxDecoration(
-                color: AppColors.containerGreen,
-                borderRadius: BorderRadius.circular(15.r),
-              ),
-              child: Text("${dayIndex}-Kun",
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14.sp)),
-            ),
-            ...staticSteps.map((step) {
-              final isHotel = step['isHotel'] as bool;
-
-              return Column(
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 5)],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        children: [
-                          Container(
-                            width: 30.w,
-                            height: 30.h,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: AppColors.containerGreen,
-                            ),
-                            child: Center(
-                              child: isHotel
-                                  ? const Icon(Icons.hotel, size: 16, color: Colors.white)
-                                  : const Icon(Icons.flight, size: 16, color: Colors.white),
-                            ),
+                      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Text(
+                          "Jami qiymat",
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: AppColors.grey,
+                            fontWeight: FontWeight.w500,
                           ),
-                          if (!isLast) Container(width: 2.w, height: 70.h, color: AppColors.containerGreen),
-                        ],
-                      ),
-                      SizedBox(width: 10.w),
+                        ),
+                        Text(
+                          "$minPrice\$",
+                          style:
+                              TextStyle(fontSize: 24.sp, fontWeight: FontWeight.w700, color: AppColors.containerGreen),
+                        ),
+                      ]),
+                      SizedBox(width: 20.w),
                       Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("${step['title']} - ${step['time']}",
-                                style: TextStyle(
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w600,
-                                    color: isDark ? AppColors.grenWhite : AppColors.grey)),
-                            SizedBox(height: 5.h),
-                            Text(step['description'] as String,
-                                style: TextStyle(
-                                    fontSize: 12.sp,
-                                    color: isDark ? AppColors.grenWhite.withOpacity(0.8) : AppColors.grey)),
-                            if (isHotel)
-                              TextButton.icon(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            AccommodationDetailsPage(id: step['accommodationId'] as int),
-                                      ));
-                                },
-                                icon: const Icon(Icons.hotel, size: 16, color: AppColors.containerGreen),
-                                label: Text("Mehmonxonani ko'rish", style: TextStyle(color: AppColors.containerGreen)),
-                              ),
-                          ],
+                        child: ElevatedButton.icon(
+                          onPressed: () {},
+                          icon: Icon(Icons.shopping_bag_outlined, color: AppColors.grenWhite),
+                          label: Text("Buyurtma berish", style: TextStyle(color: Colors.white, fontSize: 16.sp)),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.containerGreen,
+                            padding: EdgeInsets.symmetric(vertical: 12.h),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100.r)),
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 10.h),
-                ],
-              );
-            }).toList(),
-            SizedBox(height: 15.h),
-            Divider(color: AppColors.grey.withOpacity(0.3)),
-          ],
-        );
-      }).toList(),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 }
