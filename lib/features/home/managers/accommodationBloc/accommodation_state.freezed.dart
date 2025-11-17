@@ -16,6 +16,7 @@ T _$identity<T>(T value) => value;
 mixin _$AccommodationState {
   Status get status;
   AccommodationModel? get accommodation;
+  DetailModel? get umraTripDetail;
   String? get errorMessage;
 
   /// Create a copy of AccommodationState
@@ -34,17 +35,19 @@ mixin _$AccommodationState {
             (identical(other.status, status) || other.status == status) &&
             (identical(other.accommodation, accommodation) ||
                 other.accommodation == accommodation) &&
+            (identical(other.umraTripDetail, umraTripDetail) ||
+                other.umraTripDetail == umraTripDetail) &&
             (identical(other.errorMessage, errorMessage) ||
                 other.errorMessage == errorMessage));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, status, accommodation, errorMessage);
+  int get hashCode => Object.hash(
+      runtimeType, status, accommodation, umraTripDetail, errorMessage);
 
   @override
   String toString() {
-    return 'AccommodationState(status: $status, accommodation: $accommodation, errorMessage: $errorMessage)';
+    return 'AccommodationState(status: $status, accommodation: $accommodation, umraTripDetail: $umraTripDetail, errorMessage: $errorMessage)';
   }
 }
 
@@ -55,7 +58,10 @@ abstract mixin class $AccommodationStateCopyWith<$Res> {
       _$AccommodationStateCopyWithImpl;
   @useResult
   $Res call(
-      {Status status, AccommodationModel? accommodation, String? errorMessage});
+      {Status status,
+      AccommodationModel? accommodation,
+      DetailModel? umraTripDetail,
+      String? errorMessage});
 }
 
 /// @nodoc
@@ -73,6 +79,7 @@ class _$AccommodationStateCopyWithImpl<$Res>
   $Res call({
     Object? status = null,
     Object? accommodation = freezed,
+    Object? umraTripDetail = freezed,
     Object? errorMessage = freezed,
   }) {
     return _then(_self.copyWith(
@@ -84,6 +91,10 @@ class _$AccommodationStateCopyWithImpl<$Res>
           ? _self.accommodation
           : accommodation // ignore: cast_nullable_to_non_nullable
               as AccommodationModel?,
+      umraTripDetail: freezed == umraTripDetail
+          ? _self.umraTripDetail
+          : umraTripDetail // ignore: cast_nullable_to_non_nullable
+              as DetailModel?,
       errorMessage: freezed == errorMessage
           ? _self.errorMessage
           : errorMessage // ignore: cast_nullable_to_non_nullable
@@ -186,14 +197,15 @@ extension AccommodationStatePatterns on AccommodationState {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
     TResult Function(Status status, AccommodationModel? accommodation,
-            String? errorMessage)?
+            DetailModel? umraTripDetail, String? errorMessage)?
         $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
       case _AccommodationState() when $default != null:
-        return $default(_that.status, _that.accommodation, _that.errorMessage);
+        return $default(_that.status, _that.accommodation, _that.umraTripDetail,
+            _that.errorMessage);
       case _:
         return orElse();
     }
@@ -215,13 +227,14 @@ extension AccommodationStatePatterns on AccommodationState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
     TResult Function(Status status, AccommodationModel? accommodation,
-            String? errorMessage)
+            DetailModel? umraTripDetail, String? errorMessage)
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _AccommodationState():
-        return $default(_that.status, _that.accommodation, _that.errorMessage);
+        return $default(_that.status, _that.accommodation, _that.umraTripDetail,
+            _that.errorMessage);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -242,13 +255,14 @@ extension AccommodationStatePatterns on AccommodationState {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
     TResult? Function(Status status, AccommodationModel? accommodation,
-            String? errorMessage)?
+            DetailModel? umraTripDetail, String? errorMessage)?
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _AccommodationState() when $default != null:
-        return $default(_that.status, _that.accommodation, _that.errorMessage);
+        return $default(_that.status, _that.accommodation, _that.umraTripDetail,
+            _that.errorMessage);
       case _:
         return null;
     }
@@ -259,12 +273,17 @@ extension AccommodationStatePatterns on AccommodationState {
 
 class _AccommodationState implements AccommodationState {
   const _AccommodationState(
-      {required this.status, this.accommodation, this.errorMessage});
+      {required this.status,
+      this.accommodation,
+      this.umraTripDetail,
+      this.errorMessage});
 
   @override
   final Status status;
   @override
   final AccommodationModel? accommodation;
+  @override
+  final DetailModel? umraTripDetail;
   @override
   final String? errorMessage;
 
@@ -284,17 +303,19 @@ class _AccommodationState implements AccommodationState {
             (identical(other.status, status) || other.status == status) &&
             (identical(other.accommodation, accommodation) ||
                 other.accommodation == accommodation) &&
+            (identical(other.umraTripDetail, umraTripDetail) ||
+                other.umraTripDetail == umraTripDetail) &&
             (identical(other.errorMessage, errorMessage) ||
                 other.errorMessage == errorMessage));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, status, accommodation, errorMessage);
+  int get hashCode => Object.hash(
+      runtimeType, status, accommodation, umraTripDetail, errorMessage);
 
   @override
   String toString() {
-    return 'AccommodationState(status: $status, accommodation: $accommodation, errorMessage: $errorMessage)';
+    return 'AccommodationState(status: $status, accommodation: $accommodation, umraTripDetail: $umraTripDetail, errorMessage: $errorMessage)';
   }
 }
 
@@ -307,7 +328,10 @@ abstract mixin class _$AccommodationStateCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {Status status, AccommodationModel? accommodation, String? errorMessage});
+      {Status status,
+      AccommodationModel? accommodation,
+      DetailModel? umraTripDetail,
+      String? errorMessage});
 }
 
 /// @nodoc
@@ -325,6 +349,7 @@ class __$AccommodationStateCopyWithImpl<$Res>
   $Res call({
     Object? status = null,
     Object? accommodation = freezed,
+    Object? umraTripDetail = freezed,
     Object? errorMessage = freezed,
   }) {
     return _then(_AccommodationState(
@@ -336,6 +361,10 @@ class __$AccommodationStateCopyWithImpl<$Res>
           ? _self.accommodation
           : accommodation // ignore: cast_nullable_to_non_nullable
               as AccommodationModel?,
+      umraTripDetail: freezed == umraTripDetail
+          ? _self.umraTripDetail
+          : umraTripDetail // ignore: cast_nullable_to_non_nullable
+              as DetailModel?,
       errorMessage: freezed == errorMessage
           ? _self.errorMessage
           : errorMessage // ignore: cast_nullable_to_non_nullable

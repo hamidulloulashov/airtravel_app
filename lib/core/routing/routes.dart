@@ -15,5 +15,6 @@ class Routes {
   static const order = '/order';
   static const payment = '/payment';
   static const like = "/like";
-  static const detail = "/accommodation/:id";
+  static const accommodationDetail = "/accommodation";
+  static const travelDetail = "/travelDetail";
 }

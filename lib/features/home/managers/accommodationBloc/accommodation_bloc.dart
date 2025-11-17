@@ -11,7 +11,11 @@ class AccommodationBloc extends Bloc<AccommodationEvent, AccommodationState> {
   AccommodationBloc({required this.repository})
       : super(AccommodationState.initial()) {
     on<FetchAccommodation>((event, emit) async {
-      emit(state.copyWith(status: Status.loading));
+      emit(state.copyWith(
+        status: Status.loading,
+        accommodation: null,
+        umraTripDetail: null,
+      ));
 
       final result = await repository.fetchAccommodation(event.id);
       result.fold(
@@ -25,5 +29,29 @@ class AccommodationBloc extends Bloc<AccommodationEvent, AccommodationState> {
         )),
       );
     });
+
+    on<FetchUmraTripDetail>((event, emit) async {
+      emit(state.copyWith(
+        status: Status.loading,
+        accommodation: null,
+        umraTripDetail: null,
+      ));
+
+      final result = await repository.fetchUmraTripDetail(event.tripId);
+
+      result.fold(
+            (error) => emit(state.copyWith(
+          status: Status.error,
+          errorMessage: error.toString(),
+          umraTripDetail: null,
+        )),
+            (data) => emit(state.copyWith(
+          status: Status.success,
+          umraTripDetail: data,
+          errorMessage: null,
+        )),
+      );
+    });
+
   }
 }

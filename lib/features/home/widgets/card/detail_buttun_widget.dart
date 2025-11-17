@@ -26,8 +26,7 @@ class DetailButtunWidget extends StatelessWidget {
             height: 44,
             child: ElevatedButton(
               onPressed: onPressed ?? () {
-                print('Package ID: ${package.id}');
-                context.push('/accommodation/${package.id}');
+                context.push('${Routes.travelDetail}/${package.id}');
               },
 
               style: ElevatedButton.styleFrom(

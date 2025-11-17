@@ -10,6 +10,7 @@ import 'package:airtravel_app/features/accaunt/pages/profile_page.dart';
 import 'package:airtravel_app/features/home/pages/accommodation_details_page.dart';
 import 'package:airtravel_app/features/home/pages/favorit_page.dart';
 import 'package:airtravel_app/features/home/pages/home_page.dart';
+import 'package:airtravel_app/features/home/pages/travel_detail_page.dart';
 import 'package:airtravel_app/features/onboarding/pages/onboarding_page.dart';
 import 'package:airtravel_app/features/onboarding/pages/splash_page.dart';
 import 'package:flutter/material.dart';
@@ -125,5 +126,19 @@ final GoRouter router = GoRouter(
 
       },
     ),
+    GoRoute(
+      path: '${Routes.travelDetail}/:id',
+      builder: (context, state) {
+        final idStr = state.pathParameters['id'];
+        final id = int.tryParse(idStr ?? '');
+        if (id == null) {
+          return const Scaffold(
+            body: Center(child: Text('ID noto‘g‘ri')),
+          );
+        }
+        return TravelDetail(tripId: id);
+      },
+    ),
+
   ],
 );
