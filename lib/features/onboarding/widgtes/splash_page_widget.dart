@@ -35,7 +35,7 @@ class _SplashPageWidgetState extends State<SplashPageWidget> {
       context.go(Routes.home);
     } else {
     
-      context.go(Routes.signUp);
+      context.go(Routes.onboarding);
     }
   }
 

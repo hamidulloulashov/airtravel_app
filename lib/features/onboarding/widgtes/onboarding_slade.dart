@@ -1,4 +1,5 @@
 import 'package:airtravel_app/core/utils/app_colors.dart';
+import 'package:airtravel_app/data/model/onboarding_model.dart';
 import 'package:flutter/material.dart';
 
 class OnboardingSlideWidget extends StatelessWidget {
@@ -78,27 +79,3 @@ class OnboardingSlideWidget extends StatelessWidget {
   }
 }
 
-class OnboardingData {
-  final int id;
-  final String? title;
-  final String imagePath;
-  final String prompt;
-  final bool showAutoLayout;
-
-  OnboardingData({
-    required this.id,
-    this.title,
-    required this.imagePath,
-    required this.prompt,
-    this.showAutoLayout = false,
-  });
-
-  factory OnboardingData.fromJson(Map<String, dynamic> json) {
-    return OnboardingData(
-      id: json['id'],
-      title: json['title'],
-      imagePath: json['picture'],
-      prompt: json['prompt'] ?? '',
-    );
-  }
-}

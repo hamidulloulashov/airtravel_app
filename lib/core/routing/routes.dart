@@ -17,4 +17,5 @@ class Routes {
   static const like = "/like";
   static const accommodationDetail = "/accommodation";
   static const travelDetail = "/travelDetail";
+  static const slade_onboarding = "/slade_onboarding";
 }

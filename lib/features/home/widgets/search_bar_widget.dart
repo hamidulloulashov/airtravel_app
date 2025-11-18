@@ -1,3 +1,4 @@
+import 'package:airtravel_app/features/accaunt/pages/notification_settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -114,22 +115,32 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
             ),
           ),
           const SizedBox(width: 12),
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: isDark ? Colors.grey[800] : Colors.grey[100],
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Center(
-              child: Image.asset(
-                "assets/notifaction.png",
-                width: 24,
-                height: 24,
-                color: Theme.of(context).textTheme.bodyLarge?.color,
-              ),
-            ),
-          ),
+          InkWell(
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => NotificationSettingsPage()),
+    );
+  },
+  borderRadius: BorderRadius.circular(12),
+  child: Container(
+    width: 48,
+    height: 48,
+    decoration: BoxDecoration(
+      color: isDark ? Colors.grey[800] : Colors.grey[100],
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: Center(
+      child: Image.asset(
+        "assets/notifaction.png",
+        width: 24,
+        height: 24,
+        color: Theme.of(context).textTheme.bodyLarge?.color,
+      ),
+    ),
+  ),
+)
+,
         ],
       ),
     );

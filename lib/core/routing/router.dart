@@ -13,6 +13,7 @@ import 'package:airtravel_app/features/home/pages/home_page.dart';
 import 'package:airtravel_app/features/home/pages/travel_detail_page.dart';
 import 'package:airtravel_app/features/onboarding/pages/onboarding_page.dart';
 import 'package:airtravel_app/features/onboarding/pages/splash_page.dart';
+import 'package:airtravel_app/features/onboarding/widgtes/splash_page_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/pages/profile_info_page.dart';
@@ -26,6 +27,12 @@ final GoRouter router = GoRouter(
       path: Routes.splash,
       builder: (context, state) => const SplashPage(),
     ),
+GoRoute(
+  path: '/',
+  builder: (context, state) => const SplashPageWidget(),
+),
+
+
     GoRoute(
       path: Routes.like,
       builder: (context, state) => const FavoritesPage(),

@@ -1,15 +1,14 @@
 import 'dart:async';
 import 'package:airtravel_app/core/client.dart';
+import 'package:airtravel_app/data/model/onboarding_model.dart';
 import 'package:airtravel_app/data/repositories/onboarding_repository.dart';
 import 'package:airtravel_app/features/onboarding/managers/onboarding_bloc.dart';
 import 'package:airtravel_app/features/onboarding/managers/onboarding_event.dart';
 import 'package:airtravel_app/features/onboarding/managers/onboarding_state.dart';
 import 'package:airtravel_app/features/onboarding/widgtes/onboarding_slade.dart';
-import 'package:airtravel_app/features/onboarding/widgtes/splash_page_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({Key? key}) : super(key: key);
@@ -21,41 +20,15 @@ class OnboardingPage extends StatefulWidget {
 class _OnboardingPageState extends State<OnboardingPage> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
-  bool _showSplash = true;
 
   @override
-  void initState() {
-    super.initState();
-    _checkTokenAndNavigate();
-  }
-
-  Future<void> _checkTokenAndNavigate() async {
-    await Future.delayed(const Duration(seconds: 3));
-    
-    if (!mounted) return;
-
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token'); 
-    
-    if (token != null && token.isNotEmpty) {
-      if (mounted) {
-        GoRouter.of(context).go("/home");
-      }
-    } else {
-      if (mounted) {
-        setState(() {
-          _showSplash = false;
-        });
-      }
-    }
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_showSplash) {
-      return const SplashPageWidget();
-    }
-
     return BlocProvider(
       create: (_) => OnboardingBloc(OnboardingRepository(ApiClient()))
         ..add(LoadOnboardingEvent()),
@@ -132,7 +105,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                                   curve: Curves.easeInOut,
                                 );
                               } else {
-                                GoRouter.of(context).go("/signUp"); 
+                                context.go("/signUp"); 
                               }
                             },
                             style: ElevatedButton.styleFrom(
@@ -166,11 +139,5 @@ class _OnboardingPageState extends State<OnboardingPage> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
   }
 }

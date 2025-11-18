@@ -13,10 +13,36 @@ class OnboardingModel {
 
   factory OnboardingModel.fromJson(Map<String, dynamic> json) {
     return OnboardingModel(
-      id: json['id'],
-      title: json['title'],
-      picture: json['picture'],
-      prompt: json['prompt'],
+      id: json['id'] ?? 0,
+      title: json['title'] ?? '',
+      picture: json['picture'] ?? '',
+      prompt: json['prompt'] ?? '',
+    );
+  }
+}
+
+class OnboardingData {
+  final int id;
+  final String? title;
+  final String imagePath;
+  final String prompt;
+  final bool showAutoLayout;
+
+  OnboardingData({
+    required this.id,
+    this.title,
+    required this.imagePath,
+    required this.prompt,
+    this.showAutoLayout = false,
+  });
+
+  factory OnboardingData.fromJson(Map<String, dynamic> json) {
+    return OnboardingData(
+      id: json['id'] ?? 0,
+      title: json['title'],  
+      imagePath: json['picture'] ?? '',
+      prompt: json['prompt'] ?? '',
+      showAutoLayout: json['showAutoLayout'] ?? false,
     );
   }
 }

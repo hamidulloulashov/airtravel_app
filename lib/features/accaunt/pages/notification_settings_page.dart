@@ -1,9 +1,6 @@
-import 'package:airtravel_app/core/utils/app_colors.dart';
 import 'package:airtravel_app/features/accaunt/widgets/build_notification_tile.dart';
 import 'package:airtravel_app/features/common/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 class NotificationSettingsPage extends StatefulWidget {
   const NotificationSettingsPage({super.key});
 

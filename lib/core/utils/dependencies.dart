@@ -24,41 +24,41 @@ class AppDependencies {
 
   static List<BlocProvider> get providers => [
         BlocProvider<ThemeBloc>(
-          create: (context) => ThemeBloc()..add(ThemeLoaded()),
+          create: (_) => ThemeBloc()..add(ThemeLoaded()),
         ),
         BlocProvider<AuthBloc>(
-          create: (context) => AuthBloc(AuthRepository(client)),
+          create: (_) => AuthBloc(AuthRepository(client)),
         ),
         BlocProvider<OnboardingBloc>(
-          create: (context) => OnboardingBloc(OnboardingRepository(client)),
+          create: (_) => OnboardingBloc(OnboardingRepository(client)),
         ),
         BlocProvider<UserBloc>(
-          create: (context) => UserBloc(
+          create: (_) => UserBloc(
             userRepository: UserRepository(client),
           )..add(FetchUserData()),
         ),
         BlocProvider<BaseBloc>(
-          create: (context) => BaseBloc(
+          create: (_) => BaseBloc(
             baseRepo: BaseRepository(client),
           )..add(BaseFetchRegions()),
         ),
         BlocProvider<HomeBloc>(
-          create: (context) => HomeBloc(
+          create: (_) => HomeBloc(
             repository: HomeRepository(client),
           )..add(const LoadPackages()),
         ),
         BlocProvider<OrderBloc>(
-          create: (context) => OrderBloc(
+          create: (_) => OrderBloc(
             orderRepo: OrderRepository(client),
           )..add(OrdersLoading()),
         ),
         BlocProvider<PaymentBloc>(
-          create: (context) => PaymentBloc(
+    create: (_) => PaymentBloc(
             paymentRepo: PaymentRepository(client),
           )..add(PaymentsLoading()),
         ),
         BlocProvider<AccommodationBloc>(
-          create: (context) => AccommodationBloc(
+          create: (_) => AccommodationBloc(
             repository: AccommodationRepository(client),
           ),
         )
